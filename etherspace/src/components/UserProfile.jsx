@@ -1,34 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
 import { useParams } from 'react-router-dom';
+import { ethers } from 'ethers';
+import { PostCreation, UserPosts } from './PostComponent'; // Adjust import path as needed
 
-
-
-const CONTRACT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
-const CONTRACT_ABI = [
-    {
-        "inputs": [
-            {
-                "internalType": "string",
-                "name": "_username",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "_bio",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "_avatar",
-                "type": "string"
-            }
-        ],
-        "name": "createProfile",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
+const PROFILE_CONTRACT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+const PROFILE_CONTRACT_ABI = [
     {
         "inputs": [{"internalType": "address","name": "_address","type": "address"}],
         "name": "getProfile",
@@ -51,15 +27,17 @@ function UserProfile() {
 function UserProfileContent({ address })  {
     const [profile, setProfile] = useState(null);
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function fetchProfile() {
             try {
+                setLoading(true);
                 console.log("Fetching for address:", address);
                 const provider = new ethers.BrowserProvider(window.ethereum);
                 const contract = new ethers.Contract(
-                    CONTRACT_ADDRESS,
-                    CONTRACT_ABI,
+                    PROFILE_CONTRACT_ADDRESS,
+                    PROFILE_CONTRACT_ABI,
                     provider
                 );
     
@@ -75,25 +53,26 @@ function UserProfileContent({ address })  {
             } catch (err) {
                 setError('Failed to load profile');
                 console.error("Error details:", err);
+            } finally {
+                setLoading(false);
             }
         }
     
         if (address) {
             fetchProfile();
         } else {
-            console.log("No address provided");
+            setError("No address provided");
+            setLoading(false);
         }
     }, [address]);
 
+    if (loading) return <div className="text-center">Loading...</div>;
     if (error) return <div className="text-red-500 text-center">{error}</div>;
-    if (!profile) return <div className="text-center">Loading...</div>;
-    if (!profile.exists) return <div className="text-center">Profile not found</div>;
+    if (!profile || !profile.exists) return <div className="text-center">Profile not found</div>;
 
     return (
-        <div
-            className="flex items-center justify-center h-screen bg-gray-100"
-        >
-            <div className="p-6 bg-white rounded-lg shadow-md text-center">
+        <div className="flex flex-col items-center bg-gray-100 min-h-screen p-6">
+            <div className="p-6 bg-white rounded-lg shadow-md text-center w-full max-w-md mb-6">
                 {profile.avatar ? (
                     <img 
                         src={profile.avatar} 
@@ -110,9 +89,13 @@ function UserProfileContent({ address })  {
                     <p className="text-gray-700">{profile.bio}</p>
                 </div>
             </div>
+            
+            <div className="w-full max-w-md">
+                <PostCreation />
+                <UserPosts address={address} />
+            </div>
         </div>
     );
-    
 }
 
 export default UserProfile;
