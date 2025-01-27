@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { ethers } from 'ethers';
 import { useNavigate } from 'react-router-dom';
+import styles from './css/ProfileCreation.module.css';
 
-
-// The contract address and ABI are critical for interacting with your smart contract
 const CONTRACT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 const CONTRACT_ABI = [
-    // Defining the createProfile function exactly as it appears in your smart contract
     {
         "inputs": [
             {
@@ -58,7 +56,7 @@ function ProfileCreation() {
                 username,
                 bio,
                 avatar || '',
-                { gasLimit: 500000 }
+                { gasLimit: 1000000 }
             );
 
             const receipt = await tx.wait();
@@ -74,69 +72,45 @@ function ProfileCreation() {
     }
 
     return (
-        <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px' }}>
-            <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <div className={styles['profile-creation-container']}>
+            <h1 className={styles['profile-creation-title']}>
                 Create EtherSpace Profile
             </h1>
             <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: '15px' }}>
+                <div className={styles['form-group']}>
                     <input
                         type="text"
                         placeholder="Username (3-16 characters)"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        style={{
-                            padding: '8px',
-                            width: '100%',
-                            borderRadius: '4px',
-                            border: '1px solid #ddd'
-                        }}
+                        className={styles['form-input']}
                         required
                         disabled={isLoading}
                     />
                 </div>
-                <div style={{ marginBottom: '15px' }}>
+                <div className={styles['form-group']}>
                     <textarea
                         placeholder="Bio"
                         value={bio}
                         onChange={(e) => setBio(e.target.value)}
-                        style={{
-                            padding: '8px',
-                            width: '100%',
-                            borderRadius: '4px',
-                            border: '1px solid #ddd',
-                            minHeight: '100px'
-                        }}
+                        className={styles['form-textarea']}
                         required
                         disabled={isLoading}
                     />
                 </div>
-                <div style={{ marginBottom: '15px' }}>
+                <div className={styles['form-group']}>
                     <input
                         type="text"
                         placeholder="Avatar URL (optional)"
                         value={avatar}
                         onChange={(e) => setAvatar(e.target.value)}
-                        style={{
-                            padding: '8px',
-                            width: '100%',
-                            borderRadius: '4px',
-                            border: '1px solid #ddd'
-                        }}
+                        className={styles['form-input']}
                         disabled={isLoading}
                     />
                 </div>
                 <button 
                     type="submit" 
-                    style={{
-                        padding: '10px',
-                        width: '100%',
-                        backgroundColor: isLoading ? '#cccccc' : '#4CAF50',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: isLoading ? 'not-allowed' : 'pointer'
-                    }}
+                    className={styles['submit-button']}
                     disabled={isLoading}
                 >
                     {isLoading ? 'Creating Profile...' : 'Create Profile'}

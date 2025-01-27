@@ -1,0 +1,50 @@
+/* LandingPage.module.css */
+.container {
+    max-width: 42rem;
+    margin: 0 auto;
+    text-align: center;
+    padding: 1.5rem;
+  }
+  
+  .title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+  }
+  
+  .subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+  }
+  
+  .connectButton {
+    background-color: #3b82f6;
+    color: white;
+    font-weight: 700;
+    padding: 0.75rem 2rem;
+    border-radius: 0.5rem;
+    font-size: 1.125rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .connectButton:hover {
+    background-color: #2563eb;
+  }
+  
+  /* Optional: Add some animations */
+  .fadeIn {
+    animation: fadeIn 0.5s ease-in;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }

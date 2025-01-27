@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
+import styles from './css/PostComponent.module.css';
 
-const CONTRACT_ADDRESS = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
+
+const CONTRACT_ADDRESS = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
 const CONTRACT_ABI = [
     {
         "inputs": [{"internalType": "string","name": "_content","type": "string"}],
@@ -71,19 +73,19 @@ function PostCreation() {
     };
 
     return (
-        <div className="max-w-md mx-auto mt-6">
+        <div className={styles.container}>
             <textarea 
                 value={postContent}
                 onChange={(e) => setPostContent(e.target.value)}
                 maxLength={280}
-                className="w-full p-2 border rounded"
+                className={styles.textArea}
                 placeholder="What's on your mind? (Max 280 characters)"
                 rows={4}
             />
-            {error && <p className="text-red-500 mt-2">{error}</p>}
+            {error && <p className={styles.errorText}>{error}</p>}
             <button 
                 onClick={handleCreatePost}
-                className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                className={styles.postButton}
             >
                 Post
             </button>
@@ -155,38 +157,35 @@ function UserPosts({ address }) {
         }
     };
 
-    if (error) return <div className="text-red-500">{error}</div>;
+    if (error) return <div className={styles.errorText}>{error}</div>;
 
     return (
-        <div className="max-w-md mx-auto mt-6">
-            <h2 className="text-xl font-bold mb-4">Posts</h2>
+        <div className={styles.container}>
+            <h2 className={styles.postTitle}>Posts</h2>
             {posts.length === 0 ? (
-                <p className="text-gray-500">No posts yet</p>
+                <p className={styles.noPostsText}>No posts yet</p>
             ) : (
                 posts.map((post, index) => (
-                    <div 
-                        key={index} 
-                        className="bg-white border rounded p-4 mb-4 shadow-sm"
-                    >
+                    <div key={index} className={styles.postCard}>
                         {editingIndex === index ? (
                             <div>
                                 <textarea 
                                     value={editContent}
                                     onChange={(e) => setEditContent(e.target.value)}
                                     maxLength={280}
-                                    className="w-full p-2 border rounded mb-2"
+                                    className={styles.textArea}
                                     rows={4}
                                 />
-                                <div className="flex justify-between">
+                                <div className={styles.buttonContainer}>
                                     <button 
                                         onClick={() => handleUpdatePost(index)}
-                                        className="bg-green-500 text-white px-4 py-2 rounded mr-2"
+                                        className={styles.saveButton}
                                     >
                                         Save
                                     </button>
                                     <button 
                                         onClick={() => setEditingIndex(null)}
-                                        className="bg-gray-500 text-white px-4 py-2 rounded"
+                                        className={styles.cancelButton}
                                     >
                                         Cancel
                                     </button>
@@ -194,23 +193,23 @@ function UserPosts({ address }) {
                             </div>
                         ) : (
                             <>
-                                <p>{post.content}</p>
-                                <div className="text-sm text-gray-500 mt-2">
+                                <p className={styles.postContent}>{post.content}</p>
+                                <div className={styles.timestamp}>
                                     Posted on {new Date(Number(post.timestamp) * 1000).toLocaleString()}
                                 </div>
-                                <div className="flex justify-between mt-2">
+                                <div className={styles.buttonContainer}>
                                     <button 
                                         onClick={() => {
                                             setEditingIndex(index);
                                             setEditContent(post.content);
                                         }}
-                                        className="bg-blue-500 text-white px-4 py-1 rounded mr-2"
+                                        className={styles.editButton}
                                     >
                                         Edit
                                     </button>
                                     <button 
                                         onClick={() => handleDeletePost(index)}
-                                        className="bg-red-500 text-white px-4 py-1 rounded"
+                                        className={styles.deleteButton}
                                     >
                                         Delete
                                     </button>

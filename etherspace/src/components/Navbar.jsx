@@ -1,73 +1,109 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Search, Home, User, PenSquare } from 'lucide-react';
+import { ethers } from 'ethers';
+import styles from './css/Navbar.module.css';
 
+// LogoutButton Component
 function LogoutButton() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem('userAddress');
-
-    if (window.ethereum) {
-      window.ethereum.removeAllListeners();
-    }
-
+    // Reset the current address in Navbar
     navigate('/');
   };
 
   return (
-    <button
-      onClick={handleLogout}
-      className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
-    >
+    <button onClick={handleLogout} className={styles.logoutButton}>
       Logout
     </button>
   );
 }
 
+
+function LogoLink({ to, children }) {
+  return (
+      <Link 
+          to={to} 
+          className={styles.logo}
+      >
+          {children}
+      </Link>
+  );
+}
+
+function NavLink({ to, children, isActive }) {
+  return (
+      <Link 
+          to={to} 
+          className={`${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}
+      >
+          {children}
+      </Link>
+  );
+}
+
 function Navbar() {
   const location = useLocation();
-  const navigate = useNavigate();
-
-  const isLandingPage = location.pathname === '/';
+  const [currentAddress, setCurrentAddress] = useState(null);
 
   useEffect(() => {
-    const userAddress = localStorage.getItem('userAddress');
+      const storedAddress = localStorage.getItem('userAddress');
+      if (storedAddress) {
+          setCurrentAddress(storedAddress);
+      } else {
+          setCurrentAddress(null);
+      }
+  }, [location.pathname]);
 
-    // If the user is logged in and tries to go to '/', redirect them to their profile
-    if (isLandingPage && userAddress) {
-      navigate('/profile');
-    }
-  }, [isLandingPage, navigate]);
+  const isLandingPage = location.pathname === '/';
+  const isCreateProfilePage = location.pathname === '/register';
+
+  if (isLandingPage || isCreateProfilePage) {
+      return (
+          <nav className={styles.navbar}>
+              <div className={styles.logoSection}>
+                  <LogoLink to="/">
+                      EtherSpace
+                  </LogoLink>
+              </div>
+          </nav>
+      );
+  }
 
   return (
-    <nav
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        padding: '1rem',
-        backgroundColor: 'white',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-      }}
-    >
-      <div style={{ flex: 1 }}>
-        <Link to="/" className="text-2xl font-bold">
-          EtherSpace
-        </Link>
-      </div>
+      <nav className={styles.navbar}>
+          <div className={styles.logoSection}>
+              <LogoLink 
+                  to={currentAddress ? `/profile/${currentAddress}` : '/'}
+              >
+                  EtherSpace
+              </LogoLink>
+          </div>
 
-      {/* Hide "Search Users" and "Logout" buttons on the landing page */}
-      {!isLandingPage && (
-        <div style={{ flex: 1, textAlign: 'center' }}>
-          <Link to="/search">Search Users</Link>
-        </div>
-      )}
+          <div className={styles.navLinks}>
+              <NavLink to="/feed" isActive={location.pathname === '/feed'}>
+                  <Home size={20} />
+                  <span>Feed</span>
+              </NavLink>
+              <NavLink to="/search" isActive={location.pathname === '/search'}>
+                  <Search size={20} />
+                  <span>Search Users</span>
+              </NavLink>
+              <NavLink 
+                  to={currentAddress ? `/profile/${currentAddress}` : '/'} 
+                  isActive={location.pathname === `/profile/${currentAddress}`}
+              >
+                  <User size={20} />
+                  <span>Profile</span>
+              </NavLink>
+          </div>
 
-      {!isLandingPage && (
-        <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
-          <LogoutButton />
-        </div>
-      )}
-    </nav>
+          <div className={styles.rightSection}>
+              <LogoutButton />
+          </div>
+      </nav>
   );
 }
 

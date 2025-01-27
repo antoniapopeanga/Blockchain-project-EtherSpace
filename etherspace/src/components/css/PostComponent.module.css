@@ -1,0 +1,126 @@
+/* PostComponent.module.css */
+.container {
+    width: 100%;
+  }
+  
+  .textArea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.25rem;
+  }
+  
+  .errorText {
+    color: #ef4444;
+    margin-top: 0.5rem;
+  }
+  
+  .postButton {
+    margin-top: 0.5rem;
+    background-color: #3b82f6;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .postButton:hover {
+    background-color: #2563eb;
+  }
+  
+  .postTitle {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  
+  .noPostsText {
+    color: #6b7280;
+  }
+  
+  .postCard {
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    width: 100%;
+  }
+  
+  /* Rest of the styles remain the same */
+  .postContent {
+    margin-bottom: 0.5rem;
+  }
+  
+  .timestamp {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 0.5rem;
+  }
+  
+  .buttonContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+  }
+  
+  .editButton {
+    background-color: #3b82f6;
+    color: white;
+    padding: 0.25rem 1rem;
+    border-radius: 0.25rem;
+    margin-right: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .editButton:hover {
+    background-color: #2563eb;
+  }
+  
+  .deleteButton {
+    background-color: #ef4444;
+    color: white;
+    padding: 0.25rem 1rem;
+    border-radius: 0.25rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .deleteButton:hover {
+    background-color: #dc2626;
+  }
+  
+  .saveButton {
+    background-color: #10b981;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    margin-right: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .saveButton:hover {
+    background-color: #059669;
+  }
+  
+  .cancelButton {
+    background-color: #6b7280;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .cancelButton:hover {
+    background-color: #4b5563;
+  }

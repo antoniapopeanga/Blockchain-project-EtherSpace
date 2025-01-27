@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ethers } from 'ethers';
+import Modal from './Modal';
+import styles from './css/LandingPage.module.css';
 
 const CONTRACT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 const CONTRACT_ABI = [
@@ -20,50 +22,91 @@ const CONTRACT_ABI = [
 
 function LandingPage() {
     const [account, setAccount] = useState('');
+    const [isConnecting, setIsConnecting] = useState(false);
+    const [showExistingProfileModal, setShowExistingProfileModal] = useState(false);
+    const [showNoProfileModal, setShowNoProfileModal] = useState(false);
     const navigate = useNavigate();
 
     async function connectAndCheck() {
         try {
-            if (window.ethereum) {
-                const accounts = await window.ethereum.request({
-                    method: 'eth_requestAccounts'
-                });
-                const userAddress = accounts[0];
-                setAccount(userAddress);
-    
-                const provider = new ethers.BrowserProvider(window.ethereum);
-                const contract = new ethers.Contract(
-                    CONTRACT_ADDRESS,
-                    CONTRACT_ABI,
-                    provider
-                );
-    
-                const profileData = await contract.getProfile(userAddress);
-                
-                if (profileData[3]) { // exists
-                    alert('Welcome back!');
-                    navigate(`/profile/${userAddress}`);
-                } else {
-                    alert('No profile found. Redirecting to registration...');
-                    navigate('/register');
-                }
+            setIsConnecting(true);
+            
+            if (!window.ethereum) {
+                throw new Error('Please install MetaMask to use this application');
+            }
+
+            const accounts = await window.ethereum.request({
+                method: 'eth_requestAccounts'
+            });
+            const userAddress = accounts[0];
+            setAccount(userAddress);
+
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            const contract = new ethers.Contract(
+                CONTRACT_ADDRESS,
+                CONTRACT_ABI,
+                provider
+            );
+
+            const profileData = await contract.getProfile(userAddress);
+            
+            if (profileData[3]) {
+                setShowExistingProfileModal(true);
+            } else {
+                setShowNoProfileModal(true);
             }
         } catch (error) {
             console.error('Error:', error);
             alert('Error connecting wallet: ' + error.message);
+        } finally {
+            setIsConnecting(false);
         }
     }
 
+    const handleExistingProfileConfirm = () => {
+        localStorage.setItem('userAddress', account);
+        navigate(`/profile/${account}`, { replace: true });
+        setShowExistingProfileModal(false);
+    };
+
+    const handleNoProfileConfirm = () => {
+        localStorage.setItem('userAddress', account);
+        navigate('/register', { replace: true });
+        setShowNoProfileModal(false);
+    };
+
+    const handleCancel = () => {
+        setShowExistingProfileModal(false);
+        setShowNoProfileModal(false);
+    };
+
     return (
-        <div className="max-w-2xl mx-auto text-center p-6">
-            <h1 className="text-4xl font-bold mb-8">Welcome to EtherSpace</h1>
-            <p className="text-xl mb-8">Connect your wallet to get started</p>
+        <div className={`${styles.container} ${styles.fadeIn}`}>
+            <h1 className={styles.title}>Welcome to EtherSpace</h1>
+            <p className={styles.subtitle}>Connect your wallet to get started</p>
             <button 
                 onClick={connectAndCheck}
-                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-lg text-lg"
+                className={styles.connectButton}
+                disabled={isConnecting}
             >
-                Connect Wallet
+                {isConnecting ? 'Connecting...' : 'Connect Wallet'}
             </button>
+
+            {showExistingProfileModal && (
+                <Modal
+                    message="This wallet is already linked to a profile. Redirecting to your profile."
+                    onConfirm={handleExistingProfileConfirm}
+                    onCancel={handleCancel}
+                />
+            )}
+
+            {showNoProfileModal && (
+                <Modal
+                    message="This wallet doesn't have a profile yet. Would you like to create one?"
+                    onConfirm={handleNoProfileConfirm}
+                    onCancel={handleCancel}
+                />
+            )}
         </div>
     );
 }

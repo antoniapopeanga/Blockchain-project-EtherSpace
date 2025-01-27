@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ethers } from 'ethers';
+import styles from './css/UserSearch.module.css';
+
 
 const CONTRACT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 const CONTRACT_ABI = [
@@ -79,36 +81,37 @@ function UserSearch() {
     };
 
     return (
-        <div className="max-w-md mx-auto mt-6">
+        <div className={styles.container}>
             <input 
                 type="text"
                 value={searchTerm}
                 onChange={handleSearch}
                 placeholder="Search users"
-                className="w-full p-2 border rounded mb-4"
+                className={styles.searchInput}
             />
 
             <div>
                 {searchTerm && searchResults.length === 0 ? (
-                    <p className="text-gray-500">No users found</p>
+                    <p className={styles.noResults}>No users found</p>
                 ) : (
                     searchResults.map((user) => (
                         <div 
                             key={user.address} 
-                            className="flex items-center justify-between bg-white border rounded p-4 mb-4 cursor-pointer hover:bg-gray-100"
+                            className={styles.userCard}
                             onClick={() => navigateToProfile(user.address)}
                         >
-                            <div className="flex items-center">
-                                <h3 className="text-lg font-bold mr-2">{user.username}</h3>
+                            <div className={styles.userInfo}>
+                                <h3 className={styles.username}>
+                                    {user.username}
+                                </h3>
                                 {user.avatar ? (
                                     <img 
                                         src={user.avatar} 
                                         alt={user.username}
-                                        className="w-8 h-8 rounded-full object-cover"
-                                        style={{ width: '2rem', height: '2rem', objectFit: 'cover' }}
+                                        className={styles.avatar}
                                     />
                                 ) : (
-                                    <div className="w-8 h-8 rounded-full bg-gray-200" />
+                                    <div className={styles.avatarPlaceholder} />
                                 )}
                             </div>
                         </div>
