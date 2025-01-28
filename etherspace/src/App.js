@@ -5,8 +5,8 @@ import LandingPage from './components/LandingPage';
 import ProfileCreation from './components/ProfileCreation';
 import UserProfile from './components/UserProfile';
 import UserSearch from './components/UserSearch';
+import Feed from './components/Feed'
 import './App.css';
-import { Navigate } from 'react-router-dom';
 
 
 function App() {
@@ -20,11 +20,14 @@ function App() {
         <Routes>
           <Route 
             path="/" 
-            element={userAddress ? <Navigate to={`/profile/${userAddress}`} /> : <LandingPage />} 
+            element={ <LandingPage />} 
           />
           <Route path="/register" element={<ProfileCreation />} />
           <Route path="/profile/:address" element={<UserProfile />} />
           <Route path="/search" element={<UserSearch />} />
+          <Route path="/feed" element={<Feed />} /> {/* Add this route */}
+
+          
         </Routes>
       </main>
  

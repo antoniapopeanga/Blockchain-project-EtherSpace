@@ -1,16 +1,31 @@
 /* UserSearch.module.css */
 .container {
-    max-width: 28rem;
-    margin: 1.5rem auto 0;
-  }
-  
-  .searchInput {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.25rem;
-    margin-bottom: 1rem;
-  }
+  max-width: 1200px; /* Increased from 28rem */
+  margin: 2rem auto;
+  padding: 0 20px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 1rem 1.5rem; /* Increased padding */
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #d1d5db;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.searchInput::placeholder {
+  color: #9ca3af;
+  font-size: 1.1rem;
+}
   
   .noResults {
     color: #6b7280;

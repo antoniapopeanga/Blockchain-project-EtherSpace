@@ -9,7 +9,9 @@ contract PostContract {
         bool exists;
     }
 
+    mapping(address => bool) public hasPosted; // Track if an address has posted
     mapping(address => Post[]) public userPosts;
+    address[] public allUsers; // Optional array to keep track of all users if needed
 
     event PostCreated(address indexed author, string content, uint256 timestamp);
     event PostUpdated(address indexed author, uint256 indexed postIndex, string newContent);
@@ -24,9 +26,15 @@ contract PostContract {
             timestamp: block.timestamp,
             exists: true
         });
-        
+
         userPosts[msg.sender].push(newPost);
-        
+
+        // Mark the user as having posted
+        if (!hasPosted[msg.sender]) {
+            hasPosted[msg.sender] = true;
+            allUsers.push(msg.sender); // Optional: You can store the user in an array if needed
+        }
+
         emit PostCreated(msg.sender, _content, block.timestamp);
     }
 
@@ -36,7 +44,7 @@ contract PostContract {
         require(bytes(_newContent).length > 0 && bytes(_newContent).length <= 280, "Invalid post length");
 
         userPosts[msg.sender][_postIndex].content = _newContent;
-        
+
         emit PostUpdated(msg.sender, _postIndex, _newContent);
     }
 
@@ -45,7 +53,7 @@ contract PostContract {
         require(userPosts[msg.sender][_postIndex].exists, "Post does not exist");
 
         userPosts[msg.sender][_postIndex].exists = false;
-        
+
         emit PostDeleted(msg.sender, _postIndex);
     }
 
@@ -53,14 +61,14 @@ contract PostContract {
         // Return only existing posts
         Post[] memory allPosts = userPosts[_user];
         uint256 existingPostCount = 0;
-        
+
         // First count existing posts
         for (uint256 i = 0; i < allPosts.length; i++) {
             if (allPosts[i].exists) {
                 existingPostCount++;
             }
         }
-        
+
         // Create a new array with only existing posts
         Post[] memory existingPosts = new Post[](existingPostCount);
         uint256 j = 0;
@@ -70,7 +78,12 @@ contract PostContract {
                 j++;
             }
         }
-        
+
         return existingPosts;
+    }
+
+    // Get all authors (optional)
+    function getAllUsers() public view returns (address[] memory) {
+        return allUsers;
     }
 }

@@ -6,49 +6,232 @@ import styles from './css/PostComponent.module.css';
 const CONTRACT_ADDRESS = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
 const CONTRACT_ABI = [
     {
-        "inputs": [{"internalType": "string","name": "_content","type": "string"}],
-        "name": "createPost",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "author",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "content",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "PostCreated",
+      "type": "event"
     },
     {
-        "inputs": [
-            {"internalType": "uint256","name": "_postIndex","type": "uint256"},
-            {"internalType": "string","name": "_newContent","type": "string"}
-        ],
-        "name": "updatePost",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "author",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "postIndex",
+          "type": "uint256"
+        }
+      ],
+      "name": "PostDeleted",
+      "type": "event"
     },
     {
-        "inputs": [{"internalType": "uint256","name": "_postIndex","type": "uint256"}],
-        "name": "deletePost",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "author",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "postIndex",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "newContent",
+          "type": "string"
+        }
+      ],
+      "name": "PostUpdated",
+      "type": "event"
     },
     {
-        "inputs": [{"internalType": "address","name": "_user","type": "address"}],
-        "name": "getUserPosts",
-        "outputs": [
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_content",
+          "type": "string"
+        }
+      ],
+      "name": "createPost",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_postIndex",
+          "type": "uint256"
+        }
+      ],
+      "name": "deletePost",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getAllUsers",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "getUserPosts",
+      "outputs": [
+        {
+          "components": [
             {
-                "components": [
-                    {"internalType": "address","name": "author","type": "address"},
-                    {"internalType": "string","name": "content","type": "string"},
-                    {"internalType": "uint256","name": "timestamp","type": "uint256"},
-                    {"internalType": "bool","name": "exists","type": "bool"}
-                ],
-                "internalType": "struct PostContract.Post[]",
-                "name": "",
-                "type": "tuple[]"
+              "internalType": "address",
+              "name": "author",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "content",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "exists",
+              "type": "bool"
             }
-        ],
-        "stateMutability": "view",
-        "type": "function"
+          ],
+          "internalType": "struct PostContract.Post[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "hasPosted",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_postIndex",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_newContent",
+          "type": "string"
+        }
+      ],
+      "name": "updatePost",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "userPosts",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "author",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "content",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "exists",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
     }
-];
+  ];
+  
 
 function PostCreation() {
     const [postContent, setPostContent] = useState('');
