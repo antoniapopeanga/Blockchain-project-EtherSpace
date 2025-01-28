@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Search, Home, User, PenSquare } from 'lucide-react';
-import { ethers } from 'ethers';
+import { Search, Home, User } from 'lucide-react';
 import styles from './css/Navbar.module.css';
 
 // LogoutButton Component

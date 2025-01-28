@@ -3,32 +3,10 @@ import { ethers } from 'ethers';
 import { useNavigate } from 'react-router-dom';
 import styles from './css/ProfileCreation.module.css';
 
-const CONTRACT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
-const CONTRACT_ABI = [
-    {
-        "inputs": [
-            {
-                "internalType": "string",
-                "name": "_username",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "_bio",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "_avatar",
-                "type": "string"
-            }
-        ],
-        "name": "createProfile",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    }
-];
+import { 
+    PROFILE_CONTRACT_ADDRESS,
+    PROFILE_CONTRACT_ABI 
+} from '../config/contracts';
 
 function ProfileCreation() {
     const navigate = useNavigate();
@@ -47,8 +25,8 @@ function ProfileCreation() {
             const account = await signer.getAddress();
             
             const contract = new ethers.Contract(
-                CONTRACT_ADDRESS,
-                CONTRACT_ABI,
+                PROFILE_CONTRACT_ADDRESS,
+                PROFILE_CONTRACT_ABI,
                 signer
             );
 

@@ -3,123 +3,12 @@ import { ethers } from 'ethers';
 import styles from './css/Feed.module.css';
 import { useNavigate } from 'react-router-dom';
 
-const PROFILE_CONTRACT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
-const PROFILE_CONTRACT_ABI = [
-    {
-        "inputs": [{"internalType": "address","name": "_address","type": "address"}],
-        "name": "getProfile",
-        "outputs": [
-            {"internalType": "string","name": "username","type": "string"},
-            {"internalType": "string","name": "bio","type": "string"},
-            {"internalType": "string","name": "avatar","type": "string"},
-            {"internalType": "bool","name": "exists","type": "bool"}
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    }
-];
-
-const CONTRACT_ADDRESS = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
-const CONTRACT_ABI = [
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "author",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "content",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "timestamp",
-        "type": "uint256"
-      }
-    ],
-    "name": "PostCreated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "author",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "postIndex",
-        "type": "uint256"
-      }
-    ],
-    "name": "PostDeleted",
-    "type": "event"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_user",
-        "type": "address"
-      }
-    ],
-    "name": "getUserPosts",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "author",
-            "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "content",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "timestamp",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "exists",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct PostContract.Post[]",
-        "name": "",
-        "type": "tuple[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getAllUsers",
-    "outputs": [
-      {
-        "internalType": "address[]",
-        "name": "",
-        "type": "address[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  }
-];
+import { 
+    POST_CONTRACT_ADDRESS, 
+    POST_CONTRACT_ABI,
+    PROFILE_CONTRACT_ADDRESS,
+    PROFILE_CONTRACT_ABI 
+} from '../config/contracts';
 
 const Feed = () => {
     const [posts, setPosts] = useState([]);
@@ -140,8 +29,8 @@ const Feed = () => {
                     setCurrentUser(accounts[0]);
                     
                     const postContract = new ethers.Contract(
-                        CONTRACT_ADDRESS,
-                        CONTRACT_ABI,
+                        POST_CONTRACT_ADDRESS,
+                        POST_CONTRACT_ABI,
                         provider
                     );
                     

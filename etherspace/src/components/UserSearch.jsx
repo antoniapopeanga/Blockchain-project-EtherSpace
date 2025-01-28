@@ -4,21 +4,11 @@ import { ethers } from 'ethers';
 import styles from './css/UserSearch.module.css';
 
 
-const CONTRACT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
-const CONTRACT_ABI = [
-    {
-        "inputs": [{"internalType": "address","name": "_address","type": "address"}],
-        "name": "getProfile",
-        "outputs": [
-            {"internalType": "string","name": "username","type": "string"},
-            {"internalType": "string","name": "bio","type": "string"},
-            {"internalType": "string","name": "avatar","type": "string"},
-            {"internalType": "bool","name": "exists","type": "bool"}
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    }
-];
+import { 
+
+    PROFILE_CONTRACT_ADDRESS,
+    PROFILE_CONTRACT_ABI 
+} from '../config/contracts';
 
 function UserSearch() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -32,7 +22,7 @@ function UserSearch() {
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 
                 const provider = new ethers.BrowserProvider(window.ethereum);
-                const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
+                const contract = new ethers.Contract(PROFILE_CONTRACT_ADDRESS, PROFILE_CONTRACT_ABI, provider);
 
                 const profilePromises = accounts.map(async (address) => {
                     try {
