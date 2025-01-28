@@ -1,0 +1,59 @@
+.tipContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+}
+
+.tipInputContainer {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.tipInput {
+    width: 100px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.depositButton, .tipButton {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.depositButton {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.tipButton {
+    background-color: #2196F3;
+    color: white;
+}
+
+.tipButton:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.tipStats {
+    margin: 10px 0;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.errorText {
+    color: red;
+    margin-top: 10px;
+}
+
+.successText {
+    color: green;
+    margin-top: 10px;
+}

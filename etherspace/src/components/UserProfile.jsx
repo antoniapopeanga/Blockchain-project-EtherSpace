@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ethers } from 'ethers';
 import { PostCreation, UserPosts } from './PostComponent';
+import WalletManagement from './WalletManagement';  // Import the new component
+
 import styles from './css/UserProfile.module.css';
 
 import { 
@@ -82,6 +84,7 @@ function UserProfileContent({ address }) {
     if (loading) return <div className={styles.loadingText}>Loading...</div>;
     if (error) return <div className={styles.errorText}>{error}</div>;
     if (!profile || !profile.exists) return <div className={styles.notFoundText}>Profile not found</div>;
+    const isCurrentUser = address === localStorage.getItem('userAddress');
 
     return (
         <div className={styles.container}>
@@ -106,6 +109,7 @@ function UserProfileContent({ address }) {
             <div className={styles.postsSection}>
                 <PostCreation />
                 <UserPosts address={address} />
+                {isCurrentUser && <WalletManagement />}
             </div>
         </div>
     );

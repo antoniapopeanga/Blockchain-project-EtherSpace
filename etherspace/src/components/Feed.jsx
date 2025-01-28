@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import styles from './css/Feed.module.css';
 import { useNavigate } from 'react-router-dom';
+import TipPost from './TipPost';
 
 import { 
     POST_CONTRACT_ADDRESS, 
@@ -195,6 +196,10 @@ const Feed = () => {
                         <div className={styles['post-footer']}>
                             {new Date(post.timestamp * 1000).toLocaleString()}
                         </div>
+                        <TipPost 
+                        post={post}
+                        authorAddress={post.author}
+                    />
                     </div>
                 );
             })}
