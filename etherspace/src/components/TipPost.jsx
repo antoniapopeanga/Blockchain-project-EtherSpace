@@ -5,6 +5,8 @@ import styles from './css/TipPost.module.css';
 import { 
     ETH_TRANSFER_CONTRACT_ADDRESS, 
     ETH_TRANSFER_CONTRACT_ABI,
+    POST_CONTRACT_ADDRESS,
+    POST_CONTRACT_ABI
 } from '../config/contracts';
 
 const TipPost = ({ post, authorAddress }) => {
@@ -13,6 +15,9 @@ const TipPost = ({ post, authorAddress }) => {
     const [success, setSuccess] = useState('');
     const [tipCount, setTipCount] = useState(0);
     const [userBalance, setUserBalance] = useState('0');
+    const [totalTips, setTotalTips] = useState(0);
+    const [averageTip, setAverageTip] = useState(0);
+
 
     // Check and update user's contract balance
     const fetchUserBalance = async (contract) => {
@@ -24,62 +29,90 @@ const TipPost = ({ post, authorAddress }) => {
         }
     };
 
+    const fetchPostTipStats = async () => {
+        try {
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            const postContract = new ethers.Contract(
+                POST_CONTRACT_ADDRESS,
+                POST_CONTRACT_ABI,
+                provider
+            );
+    
+            const [tipCount, totalTips] = await postContract.getPostTipStats(authorAddress, post.index);
+    
+            setTipCount(Number(tipCount));
+            setTotalTips(ethers.formatEther(totalTips)); // Convert after fetching
+    
+            if (Number(tipCount) > 0) {
+                const avgTip = await postContract.calculateAverageTip(totalTips, tipCount);
+                setAverageTip(ethers.formatEther(avgTip)); // Convert only after calculation
+            } else {
+                setAverageTip(0);
+            }
+        } catch (err) {
+            console.error("Error fetching tip stats:", err);
+        }
+    };
+    
 
     const handleTip = async () => {
         try {
-            // Request account access
             await window.ethereum.request({ method: 'eth_requestAccounts' });
-            
-            // Create provider and signer
+    
             const provider = new ethers.BrowserProvider(window.ethereum);
             const signer = await provider.getSigner();
-            
-            // Create contract instances
+    
             const ethTransferContract = new ethers.Contract(
-                ETH_TRANSFER_CONTRACT_ADDRESS, 
-                ETH_TRANSFER_CONTRACT_ABI, 
+                ETH_TRANSFER_CONTRACT_ADDRESS,
+                ETH_TRANSFER_CONTRACT_ABI,
+                signer
+            );
+    
+            const postContract = new ethers.Contract(
+                POST_CONTRACT_ADDRESS,
+                POST_CONTRACT_ABI,
                 signer
             );
     
             // Convert tip amount to wei
             const tipInWei = ethers.parseEther(tipAmount);
     
-            // Perform the transfer
+            // Listen for Transfer event and trigger recordTip
+            ethTransferContract.once("Transfer", async (from, to, amount) => {
+                console.log(`Transfer detected: ${from} sent ${amount} ETH to ${to}`);
+    
+                try {
+                    // Now that ETH transfer succeeded, record the tip
+                    const tipTx = await postContract.recordTip(authorAddress, post.index, tipInWei);
+                    await tipTx.wait();
+                    
+                    // Update UI
+                    await fetchPostTipStats();
+                    setSuccess(`Tipped ${tipAmount} ETH successfully!`);
+                } catch (err) {
+                    console.error('Record Tip failed:', err);
+                    setError('Tip recording failed: ' + (err.message || 'Unknown error'));
+                }
+            });
+    
+            // Perform the transfer (this will emit the event)
             const tx = await ethTransferContract.transferTo(authorAddress, tipInWei);
-            
-            // Wait for transaction confirmation
             await tx.wait();
     
-            // Update tip count 
-            setTipCount(prevCount => prevCount + 1);
-    
-            // Fetch updated balance
-            await fetchUserBalance(ethTransferContract);
-    
-            // Show success message
-            setSuccess(`Tipped ${tipAmount} ETH successfully!`);
-            setError('');
         } catch (err) {
-            console.error('Full error:', err);
-            
-            // Error handling
-            if (err.code === 'ACTION_REJECTED') {
-                setError('Transaction was rejected by the user');
-            } else if (err.info && err.info.error) {
-                setError(`Failed to tip post: ${err.info.error.message}`);
-            } else if (err.reason) {
-                setError(`Failed to tip post: ${err.reason}`);
-            } else {
-                setError(`Failed to tip post: ${err.message}`);
-            }
+            console.error('Unexpected error:', err);
+            setError(`Failed to tip post: ${err.message || 'Unknown error'}`);
             setSuccess('');
         }
     };
+    
 
     // Fetch balance on component mount
     useEffect(() => {
+        fetchPostTipStats();
         const initializeBalance = async () => {
             try {
+                
                 // Request account access
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
                 
@@ -102,7 +135,7 @@ const TipPost = ({ post, authorAddress }) => {
         };
 
         initializeBalance();
-    }, []);
+    },[post.index, authorAddress]);
 
     return (
         <div className={styles.tipContainer}>
@@ -126,11 +159,13 @@ const TipPost = ({ post, authorAddress }) => {
                 >
                     Tip Post
                 </button>
+
             </div>
             {error && <p className={styles.errorText}>{error}</p>}
             {success && <p className={styles.successText}>{success}</p>}
             <div className={styles.tipStats}>
-                <span>Tips: {tipCount}</span>
+            <span>Total Tips: {tipCount} ETH</span>
+            <span>Average Tip: {averageTip} ETH</span>
             </div>
         </div>
     );

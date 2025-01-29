@@ -7,6 +7,9 @@ contract PostContract {
         string content;
         uint256 timestamp;
         bool exists;
+        uint256 tipCount;     // New field to track number of tips
+        uint256 totalTips;    // New field to track total amount of tips in wei
+
     }
 
     mapping(address => bool) public hasPosted; // Track if an address has posted
@@ -16,6 +19,8 @@ contract PostContract {
     event PostCreated(address indexed author, string content, uint256 timestamp);
     event PostUpdated(address indexed author, uint256 indexed postIndex, string newContent);
     event PostDeleted(address indexed author, uint256 indexed postIndex);
+    event PostTipped(address indexed tipper, address indexed author, uint256 indexed postIndex, uint256 amount);
+
 
     function createPost(string memory _content) public {
         require(bytes(_content).length > 0 && bytes(_content).length <= 280, "Invalid post length");
@@ -24,7 +29,9 @@ contract PostContract {
             author: msg.sender,
             content: _content,
             timestamp: block.timestamp,
-            exists: true
+            exists: true,
+            tipCount: 0,        // Initialize tip count
+            totalTips: 0 
         });
 
         userPosts[msg.sender].push(newPost);
@@ -86,4 +93,38 @@ contract PostContract {
     function getAllUsers() public view returns (address[] memory) {
         return allUsers;
     }
+
+
+    
+     // New function to record a tip for a post
+    function recordTip(address _author, uint256 _postIndex, uint256 _amount) public {
+        require(_postIndex < userPosts[_author].length, "Post index out of bounds");
+        require(userPosts[_author][_postIndex].exists, "Post does not exist");
+        
+        Post storage post = userPosts[_author][_postIndex];
+        post.tipCount += 1;
+        post.totalTips += _amount;
+        
+        emit PostTipped(msg.sender, _author, _postIndex, _amount);
+    }
+
+    // New function to get tip statistics for a post
+    function getPostTipStats(address _author, uint256 _postIndex) 
+        public 
+        view 
+        returns (uint256 tipCount, uint256 totalTips) 
+    {
+        require(_postIndex < userPosts[_author].length, "Post index out of bounds");
+        require(userPosts[_author][_postIndex].exists, "Post does not exist");
+        
+        Post memory post = userPosts[_author][_postIndex];
+        return (post.tipCount, post.totalTips);
+    }
+
+    // Pure function to calculate average tip amount
+    function calculateAverageTip(uint256 _totalTips, uint256 _tipCount) public pure returns (uint256) {
+        require(_tipCount > 0, "No tips to calculate average");
+        return _totalTips / _tipCount;
+    }
+
 }
