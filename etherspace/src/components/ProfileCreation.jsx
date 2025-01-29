@@ -18,29 +18,33 @@ function ProfileCreation() {
     async function handleSubmit(e) {
         e.preventDefault();
         setIsLoading(true);
-
+    
         try {
             const provider = new ethers.BrowserProvider(window.ethereum);
             const signer = await provider.getSigner();
-            const account = await signer.getAddress();
-            
+            const account = await signer.getAddress();  // Get wallet address
+    
             const contract = new ethers.Contract(
                 PROFILE_CONTRACT_ADDRESS,
                 PROFILE_CONTRACT_ABI,
                 signer
             );
-
+    
             const tx = await contract.createProfile(
                 username,
                 bio,
                 avatar || '',
                 { gasLimit: 1000000 }
             );
-
-            const receipt = await tx.wait();
+    
+            await tx.wait();
+    
+            // Store the wallet address in local state or session storage
+            localStorage.setItem('userAddress', account);
+    
             alert('Profile created successfully!');
             navigate(`/profile/${account}`);
-
+    
         } catch (error) {
             console.error('Error details:', error);
             alert('Error creating profile: ' + error.message);
@@ -48,6 +52,7 @@ function ProfileCreation() {
             setIsLoading(false);
         }
     }
+    
 
     return (
         <div className={styles['profile-creation-container']}>

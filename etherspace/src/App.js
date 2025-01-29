@@ -6,6 +6,7 @@ import ProfileCreation from './components/ProfileCreation';
 import UserProfile from './components/UserProfile';
 import UserSearch from './components/UserSearch';
 import Feed from './components/Feed'
+import WalletManagement from './components/WalletManagement';
 import './App.css';
 
 
@@ -26,6 +27,7 @@ function App() {
           <Route path="/profile/:address" element={<UserProfile />} />
           <Route path="/search" element={<UserSearch />} />
           <Route path="/feed" element={<Feed />} /> {/* Add this route */}
+          <Route path="/wallet" element={<WalletManagement />} />
 
           
         </Routes>

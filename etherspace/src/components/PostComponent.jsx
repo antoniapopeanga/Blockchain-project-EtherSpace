@@ -120,7 +120,7 @@ function UserPosts({ address }) {
 
     return (
         <div className={styles.container}>
-            <h2 className={styles.postTitle}>Posts</h2>
+            <h2 className={styles.postTitle}>Your posts</h2>
             {posts.length === 0 ? (
                 <p className={styles.noPostsText}>No posts yet</p>
             ) : (

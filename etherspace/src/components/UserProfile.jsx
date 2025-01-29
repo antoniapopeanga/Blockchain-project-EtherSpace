@@ -109,7 +109,6 @@ function UserProfileContent({ address }) {
             <div className={styles.postsSection}>
                 <PostCreation />
                 <UserPosts address={address} />
-                {isCurrentUser && <WalletManagement />}
             </div>
         </div>
     );
