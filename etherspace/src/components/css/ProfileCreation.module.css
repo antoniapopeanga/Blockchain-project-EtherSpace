@@ -28,6 +28,17 @@
     min-height: 100px;
 }
 
+.avatar-preview {
+    max-width: 100px;  /* Adjust the size as needed */
+    max-height: 100px; /* Maintain a square aspect ratio */
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the area without distortion */
+    border-radius: 50%; /* Optional: makes it circular */
+    margin: 10px auto; /* Centers the preview and adds some spacing */
+    display: block; /* Ensures it can be centered */
+}
+
 .submit-button {
     padding: 10px;
     width: 100%;
