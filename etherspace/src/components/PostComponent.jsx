@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import styles from './css/PostComponent.module.css';
+import data from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
+import { Smile } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+
 
 
 import { 
@@ -12,6 +17,17 @@ import {
 function PostCreation() {
     const [postContent, setPostContent] = useState('');
     const [error, setError] = useState('');
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [cursorPosition, setCursorPosition] = useState(0);
+
+    const handleEmojiSelect = (emoji) => {
+        const text = postContent;
+        const start = text.substring(0, cursorPosition);
+        const end = text.substring(cursorPosition);
+        const newText = start + emoji.native + end;
+        setPostContent(newText);
+        setShowEmojiPicker(false);
+    };
 
     const handleCreatePost = async () => {
         try {
@@ -25,6 +41,7 @@ function PostCreation() {
 
             setPostContent('');
             setError('');
+            setShowEmojiPicker(false);
         } catch (err) {
             console.error('Error creating post:', err);
             setError('Failed to create post');
@@ -33,14 +50,39 @@ function PostCreation() {
 
     return (
         <div className={styles.container}>
-            <textarea 
-                value={postContent}
-                onChange={(e) => setPostContent(e.target.value)}
-                maxLength={280}
-                className={styles.textArea}
-                placeholder="What's on your mind? (Max 280 characters)"
-                rows={4}
-            />
+            <div className={styles.inputContainer}>
+                <textarea 
+                    value={postContent}
+                    onChange={(e) => {
+                        setPostContent(e.target.value);
+                        setCursorPosition(e.target.selectionStart);
+                    }}
+                    onSelect={(e) => setCursorPosition(e.target.selectionStart)}
+                    maxLength={280}
+                    className={styles.textArea}
+                    placeholder="What's on your mind? (Max 280 characters)"
+                    rows={4}
+                />
+                <button
+                    type="button"
+                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                    className={styles.emojiButton}
+                >
+                    <Smile className={styles.emojiIcon} />
+                </button>
+            </div>
+
+            {showEmojiPicker && (
+                <div className={styles.emojiPickerContainer}>
+                    <Picker 
+                        data={data}
+                        onEmojiSelect={handleEmojiSelect}
+                        theme="light"
+                        previewPosition="none"
+                    />
+                </div>
+            )}
+            
             {error && <p className={styles.errorText}>{error}</p>}
             <button 
                 onClick={handleCreatePost}
@@ -119,66 +161,115 @@ function UserPosts({ address }) {
     if (error) return <div className={styles.errorText}>{error}</div>;
 
     return (
-        <div className={styles.container}>
-            <h2 className={styles.postTitle}>Your posts</h2>
-            {posts.length === 0 ? (
-                <p className={styles.noPostsText}>No posts yet</p>
-            ) : (
-                posts.map((post, index) => (
-                    <div key={index} className={styles.postCard}>
-                        {editingIndex === index ? (
-                            <div>
-                                <textarea 
-                                    value={editContent}
-                                    onChange={(e) => setEditContent(e.target.value)}
-                                    maxLength={280}
-                                    className={styles.textArea}
-                                    rows={4}
-                                />
-                                <div className={styles.buttonContainer}>
-                                    <button 
-                                        onClick={() => handleUpdatePost(index)}
-                                        className={styles.saveButton}
+        <motion.div 
+            className={styles.container}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+        >
+            <motion.h2 
+                className={styles.postTitle}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+            >
+                Your posts
+            </motion.h2>
+
+            <AnimatePresence mode="wait">
+                {posts.length === 0 ? (
+                    <motion.p 
+                        className={styles.noPostsText}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                    >
+                        No posts yet
+                    </motion.p>
+                ) : (
+                    <motion.div layout>
+                        {posts.map((post, index) => (
+                            <motion.div 
+                                key={index}
+                                className={styles.postCard}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                transition={{ duration: 0.3 }}
+                                layout
+                            >
+                                {editingIndex === index ? (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
                                     >
-                                        Save
-                                    </button>
-                                    <button 
-                                        onClick={() => setEditingIndex(null)}
-                                        className={styles.cancelButton}
-                                    >
-                                        Cancel
-                                    </button>
-                                </div>
-                            </div>
-                        ) : (
-                            <>
-                                <p className={styles.postContent}>{post.content}</p>
-                                <div className={styles.timestamp}>
-                                    Posted on {new Date(Number(post.timestamp) * 1000).toLocaleString()}
-                                </div>
-                                <div className={styles.buttonContainer}>
-                                    <button 
-                                        onClick={() => {
-                                            setEditingIndex(index);
-                                            setEditContent(post.content);
-                                        }}
-                                        className={styles.editButton}
-                                    >
-                                        Edit
-                                    </button>
-                                    <button 
-                                        onClick={() => handleDeletePost(index)}
-                                        className={styles.deleteButton}
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
-                            </>
-                        )}
-                    </div>
-                ))
-            )}
-        </div>
+                                        <textarea 
+                                            value={editContent}
+                                            onChange={(e) => setEditContent(e.target.value)}
+                                            maxLength={280}
+                                            className={styles.textArea}
+                                            rows={4}
+                                        />
+                                        <div className={styles.buttonContainer}>
+                                            <motion.button 
+                                                onClick={() => handleUpdatePost(index)}
+                                                className={styles.saveButton}
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                            >
+                                                Save
+                                            </motion.button>
+                                            <motion.button 
+                                                onClick={() => setEditingIndex(null)}
+                                                className={styles.cancelButton}
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                            >
+                                                Cancel
+                                            </motion.button>
+                                        </div>
+                                    </motion.div>
+                                ) : (
+                                    <motion.div layout>
+                                        <motion.p 
+                                            className={styles.postContent}
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                        >
+                                            {post.content}
+                                        </motion.p>
+                                        <motion.div className={styles.timestamp}>
+                                            Posted on {new Date(Number(post.timestamp) * 1000).toLocaleString()}
+                                        </motion.div>
+                                        <div className={styles.buttonContainer}>
+                                            <motion.button 
+                                                onClick={() => {
+                                                    setEditingIndex(index);
+                                                    setEditContent(post.content);
+                                                }}
+                                                className={styles.editButton}
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                            >
+                                                Edit
+                                            </motion.button>
+                                            <motion.button 
+                                                onClick={() => handleDeletePost(index)}
+                                                className={styles.deleteButton}
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                            >
+                                                Delete
+                                            </motion.button>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </motion.div>
     );
 }
 
