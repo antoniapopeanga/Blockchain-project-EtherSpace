@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ethers } from 'ethers';
 import { PostCreation, UserPosts } from './PostComponent';
-import WalletManagement from './WalletManagement';  // Import the new component
+import ProfileEdit from './ProfileEdit';
 
 import styles from './css/UserProfile.module.css';
 
@@ -21,6 +21,8 @@ function UserProfileContent({ address }) {
     const [profile, setProfile] = useState(null);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
+
 
     useEffect(() => {
         const checkAuthAndFetchProfile = async () => {
@@ -84,27 +86,60 @@ function UserProfileContent({ address }) {
     if (loading) return <div className={styles.loadingText}>Loading...</div>;
     if (error) return <div className={styles.errorText}>{error}</div>;
     if (!profile || !profile.exists) return <div className={styles.notFoundText}>Profile not found</div>;
-    const isCurrentUser = address === localStorage.getItem('userAddress');
+    const handleEdit = () => {
+        setIsEditing(true);
+    };
+
+    const handleUpdateSuccess = (updatedProfile) => {
+        setProfile(updatedProfile);
+        setIsEditing(false);
+    };
+
+    const handleCancel = () => {
+        setIsEditing(false);
+    };
+
+    if (loading) return <div className={styles.loadingText}>Loading...</div>;
+    if (error) return <div className={styles.errorText}>{error}</div>;
+    if (!profile || !profile.exists) return <div className={styles.notFoundText}>Profile not found</div>;
+    
+    const isCurrentUser = address.toLowerCase() === localStorage.getItem('userAddress').toLowerCase();
 
     return (
         <div className={styles.container}>
-            <div className={styles.profileCard}>
-                {profile.avatar ? (
-                    <img 
-                        src={profile.avatar} 
-                        alt={profile.username}
-                        className={styles.avatar}
-                        onError={(e) => e.target.src = 'https://via.placeholder.com/128'} 
-                    />
-                ) : (
-                    <div className={styles.avatarPlaceholder} />
-                )}
-                <h1 className={styles.username}>{profile.username}</h1>
-                <div className={styles.bioSection}>
-                    <h2 className={styles.bioTitle}>Bio</h2>
-                    <p className={styles.bioText}>{profile.bio}</p>
+            {isEditing ? (
+                <ProfileEdit 
+                    profile={profile}
+                    onUpdate={handleUpdateSuccess}
+                    onCancel={handleCancel}
+                />
+            ) : (
+                <div className={styles.profileCard}>
+                    {profile.avatar ? (
+                        <img 
+                            src={profile.avatar} 
+                            alt={profile.username}
+                            className={styles.avatar}
+                            onError={(e) => e.target.src = 'https://via.placeholder.com/128'} 
+                        />
+                    ) : (
+                        <div className={styles.avatarPlaceholder} />
+                    )}
+                    <h1 className={styles.username}>{profile.username}</h1>
+                    <div className={styles.bioSection}>
+                        <h2 className={styles.bioTitle}>Bio</h2>
+                        <p className={styles.bioText}>{profile.bio}</p>
+                    </div>
+                    {isCurrentUser && (
+                        <button 
+                            onClick={handleEdit}
+                            className={styles.editButton}
+                        >
+                            Edit Profile
+                        </button>
+                    )}
                 </div>
-            </div>
+            )}
             
             <div className={styles.postsSection}>
                 <PostCreation />
