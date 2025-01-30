@@ -117,11 +117,14 @@ function UserProfileContent({ address }) {
                 <div className={styles.profileCard}>
                     {profile.avatar ? (
                         <img 
-                            src={profile.avatar} 
-                            alt={profile.username}
-                            className={styles.avatar}
-                            onError={(e) => e.target.src = 'https://via.placeholder.com/128'} 
-                        />
+                        src={profile.avatar || '/default_avatar.jpg'} 
+                        alt={profile.username}
+                        className={styles.avatar}
+                        onError={(e) => {
+                            console.log('Avatar load error, falling back to default');
+                            e.target.src = '/default_avatar.jpg';
+                        }} 
+                    />
                     ) : (
                         <div className={styles.avatarPlaceholder} />
                     )}

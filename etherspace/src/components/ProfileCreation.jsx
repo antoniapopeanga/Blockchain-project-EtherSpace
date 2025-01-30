@@ -26,17 +26,22 @@ function ProfileCreation() {
             setAvatarPreview(URL.createObjectURL(file));
         }
     };
-
     const uploadToIPFS = async (file) => {
-        if (!file) return '';
-    
         try {
             const url = 'https://api.pinata.cloud/pinning/pinFileToIPFS';
             const formData = new FormData();
-            formData.append('file', file);
+    
+            if (!file) {
+                // If no file is provided, fetch the default avatar
+                const response = await fetch('/default_avatar.jpg');
+                const blob = await response.blob();
+                formData.append('file', blob, 'default_avatar.jpg');
+            } else {
+                formData.append('file', file);
+            }
     
             const pinataMetadata = JSON.stringify({
-                name: file.name,
+                name: file ? file.name : 'default_avatar.jpg',
                 keyvalues: {
                     type: 'avatar'
                 }
@@ -56,10 +61,8 @@ function ProfileCreation() {
                 }
             });
     
-            // Log full response for debugging
             console.log('Pinata Upload Response:', response.data);
     
-            // Extract IPFS hash
             const ipfsHash = response.data.IpfsHash || 
                              response.data.hash || 
                              response.data.result?.IpfsHash;
@@ -70,7 +73,6 @@ function ProfileCreation() {
     
             return `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
         } catch (error) {
-            // Comprehensive error logging
             console.error('Pinata Upload Error Details:', {
                 fullError: error,
                 responseStatus: error.response?.status,
@@ -79,17 +81,11 @@ function ProfileCreation() {
                 requestConfig: error.config
             });
     
-            // Detailed error alert
             if (error.response) {
-                // Server responded with an error
-                alert(`Upload failed: 
-                    Status ${error.response.status}
-                    ${JSON.stringify(error.response.data)}`);
+                alert(`Upload failed: \n    Status ${error.response.status}\n    ${JSON.stringify(error.response.data)}`);
             } else if (error.request) {
-                // Request made but no response received
                 alert('Upload failed: No response from Pinata. Check your network connection.');
             } else {
-                // Something happened in setting up the request
                 alert(`Upload failed: ${error.message}`);
             }
     
