@@ -4,31 +4,39 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(7, 7, 122, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    backdrop-filter: blur(5px);
 }
 
 .modalContainer {
-    background: white;
+    background: linear-gradient(145deg, #0D0DE0, #07077A);
     padding: 2rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 1rem;
+    box-shadow: 0 0 20px rgba(13, 13, 224, 0.3),
+                0 0 40px rgba(12, 12, 206, 0.2);
     width: 90%;
     max-width: 400px;
     text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
 }
 
 .modalTitle {
     font-size: 1.25rem;
     margin-bottom: 1.5rem;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .modalActions {
     display: flex;
     justify-content: space-evenly;
+    margin-top: 2rem;
+    gap: 1rem;
 }
 
 .confirmButton,
@@ -38,22 +46,55 @@
     border: none;
     border-radius: 0.5rem;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    min-width: 120px;
 }
 
 .confirmButton {
-    background-color: #3b82f6;
+    background: linear-gradient(45deg, #0D0DE0, #0C0CCE);
     color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px rgba(13, 13, 224, 0.3);
 }
 
 .confirmButton:hover {
-    background-color: #2563eb;
+    background: linear-gradient(45deg, #0C0CCE, #0A0AA7);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(13, 13, 224, 0.4);
 }
 
 .cancelButton {
-    background-color: #e0e0e0;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .cancelButton:hover {
-    background-color: #bdbdbd;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+}
+
+/* Add animation for modal appearance */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modalContainer {
+    animation: modalFadeIn 0.3s ease-out forwards;
+}
+
+/* Optional: Add focus states for better accessibility */
+.confirmButton:focus,
+.cancelButton:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
 }

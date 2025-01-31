@@ -1,24 +1,107 @@
 /* LandingPage.module.css */
+
+body {
+  background-image: url('background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin: 0;
+  min-height: 100vh;
+}
 .container {
     max-width: 42rem;
     margin: 0 auto;
     text-align: center;
-    padding: 1.5rem;
+    padding: 1rem;
   }
-  
+
+  .logo-container {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+}
+
+.starField {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle var(--duration) ease-in-out infinite;
+    opacity: 0;
+    z-index: 1;
+}
+
+@keyframes twinkle {
+    0%, 100% {
+        opacity: 0;
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-20px) scale(1.5);
+        box-shadow: 0 0 4px 2px rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* Update your existing logo styles */
+.logo {
+    width: 180px;
+    height: auto;
+    position: relative;
+    z-index: 2;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.4))
+           drop-shadow(0 0 30px rgba(100, 149, 237, 0.4))
+           drop-shadow(0 0 45px rgba(0, 191, 255, 0.2));
+}
+
+.logo:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.6))
+           drop-shadow(0 0 40px rgba(100, 149, 237, 0.6))
+           drop-shadow(0 0 60px rgba(0, 191, 255, 0.4));
+}
+
+@keyframes glowPulse {
+    0%, 100% {
+        filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.4))
+               drop-shadow(0 0 30px rgba(100, 149, 237, 0.4))
+               drop-shadow(0 0 45px rgba(0, 191, 255, 0.2));
+    }
+    50% {
+        filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.6))
+               drop-shadow(0 0 50px rgba(100, 149, 237, 0.6))
+               drop-shadow(0 0 75px rgba(0, 191, 255, 0.4));
+    }
+}
   .title {
     font-size: 2.25rem;
     font-weight: 700;
+    color:white;
     margin-bottom: 2rem;
   }
   
   .subtitle {
     font-size: 1.25rem;
     margin-bottom: 2rem;
+    color:white;
+
   }
   
   .connectButton {
-    background-color: #3b82f6;
+    background: linear-gradient(45deg, #0D0DE0, #0C0CCE, #0A0AA7, #07077A);
     color: white;
     font-weight: 700;
     padding: 0.75rem 2rem;
@@ -26,12 +109,16 @@
     font-size: 1.125rem;
     border: none;
     cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .connectButton:hover {
-    background-color: #2563eb;
-  }
+    transition: all 0.3s ease;
+}
+
+.connectButton:hover {
+    background: linear-gradient(45deg, #07077A, #0A0AA7, #0C0CCE, #0D0DE0);
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(13, 13, 224, 0.3);
+}
+
+
   
   /* Optional: Add some animations */
   .fadeIn {
@@ -47,4 +134,28 @@
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  @media screen and (max-width: 400px){
+
+    .logo {
+      width: 100px;
+      height: auto;
+      position: relative;
+      z-index: 2;
+      transition: all 0.3s ease;
+      filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.4))
+             drop-shadow(0 0 30px rgba(100, 149, 237, 0.4))
+             drop-shadow(0 0 45px rgba(0, 191, 255, 0.2));
+  }
+
+
+  .title {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color:white;
+    margin-bottom: 2rem;
+  }
+  
+
   }

@@ -34,7 +34,7 @@ function App() {
       </main>
  
       <footer className="App-footer">
-        <p>Built with Ethereum & React</p>
+        <p>Your new decentralized social network</p>
       </footer>
     </div>
   );

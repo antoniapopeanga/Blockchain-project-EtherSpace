@@ -83,6 +83,43 @@ function UserProfileContent({ address }) {
         return () => clearInterval(interval);
     }, [navigate]);
 
+
+    useEffect(() => {
+        if (!profile) return; // Only create stars when profile is loaded
+    
+        const starField = document.createElement('div');
+        starField.className = styles.starField;
+        
+        // Create 20 stars
+        for (let i = 0; i < 40; i++) {
+            const star = document.createElement('div');
+            star.className = styles.star;
+            
+            // Random position
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            
+            // Random animation duration
+            star.style.setProperty('--duration', `${2 + Math.random() * 3}s`);
+            
+            // Random animation delay
+            star.style.animationDelay = `${Math.random() * 3}s`;
+            
+            starField.appendChild(star);
+        }
+        
+        const profileCard = document.querySelector(`.${styles.profileCard}`);
+        if (profileCard) {
+            profileCard.appendChild(starField);
+        }
+        
+        return () => {
+            if (starField.parentElement) {
+                starField.remove();
+            }
+        };
+    }, [profile]); // Add profile as dependency
+
     if (loading) return <div className={styles.loadingText}>Loading...</div>;
     if (error) return <div className={styles.errorText}>{error}</div>;
     if (!profile || !profile.exists) return <div className={styles.notFoundText}>Profile not found</div>;
@@ -99,11 +136,14 @@ function UserProfileContent({ address }) {
         setIsEditing(false);
     };
 
+    
     if (loading) return <div className={styles.loadingText}>Loading...</div>;
     if (error) return <div className={styles.errorText}>{error}</div>;
     if (!profile || !profile.exists) return <div className={styles.notFoundText}>Profile not found</div>;
     
     const isCurrentUser = address.toLowerCase() === localStorage.getItem('userAddress').toLowerCase();
+
+
 
     return (
         <div className={styles.container}>

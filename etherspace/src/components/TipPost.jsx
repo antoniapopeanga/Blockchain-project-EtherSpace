@@ -139,9 +139,10 @@ const TipPost = ({ post, authorAddress }) => {
 
     return (
         <div className={styles.tipContainer}>
-            <div className={styles.tipStats}>
-                <span>Your Contract Balance: {userBalance} ETH</span>
+            <div className={styles.balanceSection}>
+                Your Wallet Balance: {userBalance} ETH
             </div>
+            
             <div className={styles.tipInputContainer}>
                 <input 
                     type="number" 
@@ -159,16 +160,24 @@ const TipPost = ({ post, authorAddress }) => {
                 >
                     Tip Post
                 </button>
-
             </div>
+    
             {error && <p className={styles.errorText}>{error}</p>}
             {success && <p className={styles.successText}>{success}</p>}
+    
             <div className={styles.tipStats}>
-            <span>Total Tips: {tipCount} ETH</span>
-            <span>Average Tip: {averageTip} ETH</span>
+                <div className={styles.statBox}>
+                    <span className={styles.statLabel}>Total Tips</span>
+                    <span className={styles.statValue}>{tipCount} ETH</span>
+                </div>
+                <div className={styles.statBox}>
+                    <span className={styles.statLabel}>Average Tip</span>
+                    <span className={styles.statValue}>{averageTip} ETH</span>
+                </div>
             </div>
         </div>
     );
-};
+
+}
 
 export default TipPost;

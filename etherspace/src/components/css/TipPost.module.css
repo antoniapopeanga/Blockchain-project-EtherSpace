@@ -1,59 +1,130 @@
 .tipContainer {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 15px;
-    background-color: #f4f4f4;
-    border-radius: 8px;
+    padding: 1rem;
+    background: linear-gradient(145deg, #0D0DE0, #07077A);
+    box-shadow: 0 0 20px rgba(13, 13, 224, 0.2);
+    color: white;
+    gap: 1.2rem;
+    width: 100%;
+    max-width: 400px;
+}
+
+.balanceSection {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .tipInputContainer {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1rem;
+    width: 100%;
 }
 
 .tipInput {
-    width: 100px;
-    padding: 5px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-.depositButton, .tipButton {
-    padding: 8px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.depositButton {
-    background-color: #4CAF50;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.5rem;
     color: white;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.tipInput:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 15px rgba(13, 13, 224, 0.3);
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .tipButton {
-    background-color: #2196F3;
+    background: linear-gradient(45deg, #0D0DE0, #0C0CCE);
     color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(13, 13, 224, 0.3);
+}
+
+.tipButton:hover:not(:disabled) {
+    background: linear-gradient(45deg, #0C0CCE, #0A0AA7);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(13, 13, 224, 0.4);
 }
 
 .tipButton:disabled {
-    background-color: #cccccc;
+    background: rgba(255, 255, 255, 0.1);
     cursor: not-allowed;
+    opacity: 0.7;
 }
 
 .tipStats {
-    margin: 10px 0;
-    font-size: 0.9em;
-    color: #666;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    width: 100%;
+}
+
+.statBox {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.statLabel {
+    display: block;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.3rem;
+}
+
+.statValue {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
 }
 
 .errorText {
-    color: red;
-    margin-top: 10px;
+    color: #ff6b6b;
+    text-align: center;
+    background: rgba(255, 0, 0, 0.1);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 0, 0, 0.2);
 }
 
 .successText {
-    color: green;
-    margin-top: 10px;
+    color: #32d826;
+    text-align: center;
+    padding: 0.75rem;
+  
 }
+ 
+ /* Add responsive design for smaller screens */
+ @media (max-width: 768px) {
+    .tipInputContainer {
+        flex-direction: column;
+        width: 100%;
+    }
+ 
+    .tipInput {
+        width: 100%;
+    }
+ 
+    .depositButton, .tipButton {
+        width: 100%;
+    }
+ }
+
+ 

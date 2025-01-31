@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ethers } from 'ethers';
 import Modal from './Modal';
 import styles from './css/LandingPage.module.css';
+import logo from './css/logo.png'; 
+
 
 import { 
     PROFILE_CONTRACT_ADDRESS,
@@ -69,8 +71,46 @@ function LandingPage() {
         setShowNoProfileModal(false);
     };
 
+    //stars animation
+    useEffect(() => {
+        const starField = document.createElement('div');
+        starField.className = styles.starField;
+        
+        // Create 20 stars
+        for (let i = 0; i < 60; i++) {
+            const star = document.createElement('div');
+            star.className = styles.star;
+            
+            // Random position
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            
+            // Random animation duration
+            star.style.setProperty('--duration', `${2 + Math.random() * 3}s`);
+            
+            // Random animation delay
+            star.style.animationDelay = `${Math.random() * 3}s`;
+            
+            starField.appendChild(star);
+        }
+        
+        const logoContainer = document.querySelector(`.${styles['logo-container']}`);
+        if (logoContainer) {
+            logoContainer.appendChild(starField);
+        }
+        
+        return () => starField.remove();
+    }, []);
+
     return (
         <div className={`${styles.container} ${styles.fadeIn}`}>
+           <div className={styles['logo-container']}>
+                <img 
+                    src={logo} 
+                    alt="EtherSpace Logo" 
+                    className={styles.logo}
+                />
+            </div>
             <h1 className={styles.title}>Welcome to EtherSpace</h1>
             <p className={styles.subtitle}>Connect your wallet to get started</p>
             <button 

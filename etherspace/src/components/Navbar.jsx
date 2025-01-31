@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Search, Home, User, Wallet } from 'lucide-react';
+import { Search, Home, User, Wallet, Menu } from 'lucide-react';
 import styles from './css/Navbar.module.css';
 
 // LogoutButton Component
@@ -27,11 +27,12 @@ function LogoLink({ to, children }) {
   );
 }
 
-function NavLink({ to, children, isActive }) {
+function NavLink({ to, children, isActive, onClick }) {
   return (
     <Link 
       to={to} 
       className={`${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}
+      onClick={onClick}
     >
       {children}
     </Link>
@@ -41,7 +42,7 @@ function NavLink({ to, children, isActive }) {
 function Navbar() {
   const location = useLocation();
   const [currentAddress, setCurrentAddress] = useState(null);
-  const [contractBalance, setContractBalance] = useState('0');
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const storedAddress = localStorage.getItem('userAddress');
@@ -51,6 +52,34 @@ function Navbar() {
       setCurrentAddress(null);
     }
   }, [location.pathname]);
+
+  // Close menu when route changes
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const navbar = document.querySelector(`.${styles.navbar}`);
+    if (navbar) {
+      const starField = document.createElement('div');
+      starField.className = styles.starField;
+      
+      for (let i = 0; i < 30; i++) {
+        const star = document.createElement('div');
+        star.className = styles.star;
+        
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        star.style.setProperty('--duration', `${2 + Math.random() * 3}s`);
+        star.style.animationDelay = `${Math.random() * 3}s`;
+        
+        starField.appendChild(star);
+      }
+      
+      navbar.appendChild(starField);
+      return () => starField.remove();
+    }
+  }, []);
 
   const isLandingPage = location.pathname === '/';
   const isCreateProfilePage = location.pathname === '/register';
@@ -75,18 +104,36 @@ function Navbar() {
         </LogoLink>
       </div>
 
-      <div className={styles.navLinks}>
-        <NavLink to="/feed" isActive={location.pathname === '/feed'}>
+      <button 
+        className={`${styles.hamburger} ${isOpen ? styles.open : ''}`}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <Menu size={24} color="white" />
+      </button>
+
+      <div className={`${styles.overlay} ${isOpen ? styles.open : ''}`} onClick={() => setIsOpen(false)}></div>
+      
+      <div className={`${styles.navLinks} ${isOpen ? styles.open : ''}`}>
+        <NavLink 
+          to="/feed" 
+          isActive={location.pathname === '/feed'}
+          onClick={() => setIsOpen(false)}
+        >
           <Home size={20} />
           <span>Feed</span>
         </NavLink>
-        <NavLink to="/search" isActive={location.pathname === '/search'}>
+        <NavLink 
+          to="/search" 
+          isActive={location.pathname === '/search'}
+          onClick={() => setIsOpen(false)}
+        >
           <Search size={20} />
           <span>Search Users</span>
         </NavLink>
         <NavLink 
           to={currentAddress ? `/profile/${currentAddress}` : '/'} 
           isActive={location.pathname === `/profile/${currentAddress}`}
+          onClick={() => setIsOpen(false)}
         >
           <User size={20} />
           <span>Profile</span>
@@ -94,10 +141,14 @@ function Navbar() {
         <NavLink 
           to="/wallet" 
           isActive={location.pathname === '/wallet'}
+          onClick={() => setIsOpen(false)}
         >
           <Wallet size={20} />
           <span>Wallet</span>
         </NavLink>
+        <div className={styles.mobileLogout}>
+          <LogoutButton />
+        </div>
       </div>
 
       <div className={styles.rightSection}>

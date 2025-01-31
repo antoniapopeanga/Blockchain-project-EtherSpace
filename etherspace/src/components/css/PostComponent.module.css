@@ -1,182 +1,207 @@
-/* PostComponent.module.css */
 .container {
-    width: 100%;
-  }
-  
-  .textArea {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.25rem;
-  }
-  
-  .errorText {
-    color: #ef4444;
-    margin-top: 0.5rem;
-  }
-  
-  .postButton {
-    margin-top: 0.5rem;
-    background-color: #3b82f6;
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 0.25rem;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .postButton:hover {
-    background-color: #2563eb;
-  }
-  
-  .postTitle {
-    font-size: 1.25rem;
-    font-weight: 700;
-    text-align: left;
-    margin-bottom: 1rem;
-  }
-  
-  .noPostsText {
-    color: #6b7280;
-  }
-  
-  .postCard {
-    background-color: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.25rem;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    width: 100%;
-  }
-  
-  /* Rest of the styles remain the same */
-  .postContent {
-    margin-bottom: 0.5rem;
-  }
-  
-  .timestamp {
-    font-size: 0.875rem;
-    color: #6b7280;
-    margin-top: 0.5rem;
-  }
-  
-  .buttonContainer {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 0.5rem;
-  }
-  
-  .editButton {
-    background-color: #3b82f6;
-    color: white;
-    padding: 0.25rem 1rem;
-    border-radius: 0.25rem;
-    margin-right: 0.5rem;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .editButton:hover {
-    background-color: #2563eb;
-  }
-  
-  .deleteButton {
-    background-color: #ef4444;
-    color: white;
-    padding: 0.25rem 1rem;
-    border-radius: 0.25rem;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .deleteButton:hover {
-    background-color: #dc2626;
-  }
-  
-  .saveButton {
-    background-color: #10b981;
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 0.25rem;
-    margin-right: 0.5rem;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .saveButton:hover {
-    background-color: #059669;
-  }
-  
-  .cancelButton {
-    background-color: #6b7280;
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 0.25rem;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .cancelButton:hover {
-    background-color: #4b5563;
-  }
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  .inputContainer {
-    position: relative;
-    display: flex;
-    align-items: flex-start;
-    width: 100%;
+.textArea {
+  width: 100%;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  color: white;
+  resize: vertical;
+  transition: all 0.3s ease;
+  min-height: 100px;
+  padding-right: 100px;
+}
+
+.textArea:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.errorText {
+  color: #ff6b6b;
+  margin-top: 0.5rem;
+  background: rgba(255, 0, 0, 0.1);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 0, 0, 0.2);
+}
+
+.postButton {
+  margin-top: 1rem;
+  background: linear-gradient(45deg, #0D0DE0, #0C0CCE);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(13, 13, 224, 0.3);
+}
+
+.postButton:hover {
+  background: linear-gradient(45deg, #0C0CCE, #0A0AA7);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(13, 13, 224, 0.4);
+}
+
+.postTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: left;
+  margin-bottom: 1rem;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.noPostsText {
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+}
+
+.postCard {
+  background: linear-gradient(145deg, #0D0DE0, #07077A);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin: 0 0 1rem 0; /* Explicitly set all margins */
+  width: 100%;
+  color: white;
+  transition: all 0.3s ease;
+  box-sizing: border-box; /* Add this to ensure padding is included in width */
+}
+
+.postCard:hover {
+  transform: translateY(-2px);
+}
+
+.postContent {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.timestamp {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 0.75rem;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.editButton, .saveButton {
+  background: linear-gradient(45deg, #0D0DE0, #0C0CCE);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.editButton:hover, .saveButton:hover {
+  background: linear-gradient(45deg, #0C0CCE, #0A0AA7);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(13, 13, 224, 0.3);
+}
+
+.deleteButton {
+  background: rgba(255, 59, 59, 0.2);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 59, 59, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.deleteButton:hover {
+  background: rgba(255, 59, 59, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 59, 59, 0.2);
+}
+
+.cancelButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.cancelButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.inputContainer {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
 }
 
 .emojiButton {
-    position: absolute;
-    right: 8px;
-    top: 8px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
 }
 
 .emojiButton:hover {
-    background-color: #f0f0f0;
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
 }
 
 .emojiIcon {
-    width: 20px;
-    height: 20px;
-    color: #666;
+  width: 20px;
+  height: 20px;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .emojiPickerContainer {
-    position: absolute;
-    z-index: 1000;
-    margin-top: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border-radius: 8px;
+  position: absolute;
+  z-index: 1000;
+  margin-top: 8px;
+  box-shadow: 0 4px 20px rgba(13, 13, 224, 0.4);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
 }
 
-/* Ensure textarea has space for emoji button */
-.textArea {
-    padding-right: 40px !important;
-}
-
-/* Mobile responsiveness for emoji picker */
 @media (max-width: 768px) {
-    .emojiPickerContainer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        margin: 0;
-    }
+  .emojiPickerContainer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: 0;
+      border-radius: 1rem 1rem 0 0;
+  }
 }

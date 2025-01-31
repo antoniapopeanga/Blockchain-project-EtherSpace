@@ -132,6 +132,49 @@ const Feed = () => {
         fetchPosts();
     }, [contract, currentUser, profileContract]);
 
+    useEffect(() => {
+        const createStarsForElement = (element, numStars) => {
+            const starField = document.createElement('div');
+            starField.className = styles.starField;
+            
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = styles.star;
+                
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.setProperty('--duration', `${2 + Math.random() * 3}s`);
+                star.style.animationDelay = `${Math.random() * 3}s`;
+                
+                starField.appendChild(star);
+            }
+            
+            element.appendChild(starField);
+            return starField;
+        };
+
+        // Create stars for the container
+        const feedContainer = document.querySelector(`.${styles['feed-container']}`);
+        let containerStars = null;
+        if (feedContainer) {
+            containerStars = createStarsForElement(feedContainer, 60); // More stars for container
+        }
+
+        // Create stars for each post card
+        const postCards = document.querySelectorAll(`.${styles['post-card']}`);
+        const postStarFields = [];
+        postCards.forEach(card => {
+            const starField = createStarsForElement(card, 30); // Fewer stars for cards
+            postStarFields.push(starField);
+        });
+
+        // Cleanup function
+        return () => {
+            if (containerStars) containerStars.remove();
+            postStarFields.forEach(field => field.remove());
+        };
+    }, [loading, posts]);
+
     const handleAuthorClick = (authorAddress) => {
         navigate(`/profile/${authorAddress}`);
     };

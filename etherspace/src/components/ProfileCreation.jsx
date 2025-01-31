@@ -163,13 +163,27 @@ function ProfileCreation() {
                     />
                 </div>
                 <div className={styles['form-group']}>
-                    <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        className={styles['form-input']}
-                        disabled={isLoading}
-                    />
+                    <div className={styles['file-input-container']}>
+                        <input
+                            type="file"
+                            id="avatar-upload"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            className={styles['file-input']}
+                            disabled={isLoading}
+                        />
+                        <label 
+                            htmlFor="avatar-upload" 
+                            className={`${styles['file-input-label']} ${isLoading ? styles.disabled : ''}`}
+                        >
+                            {avatar ? 'Change Avatar' : 'Choose Avatar'}
+                        </label>
+                        {avatar && (
+                            <div className={styles['file-name']}>
+                                {avatar.name}
+                            </div>
+                        )}
+                    </div>
                     {avatarPreview && (
                         <img 
                             src={avatarPreview} 
