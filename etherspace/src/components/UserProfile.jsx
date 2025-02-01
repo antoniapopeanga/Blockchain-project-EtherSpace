@@ -185,7 +185,8 @@ function UserProfileContent({ address }) {
             )}
             
             <div className={styles.postsSection}>
-                <PostCreation />
+                {isCurrentUser &&<PostCreation />}
+                
                 <UserPosts address={address} />
             </div>
         </div>

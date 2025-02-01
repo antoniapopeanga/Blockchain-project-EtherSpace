@@ -159,6 +159,8 @@ function UserPosts({ address }) {
     };
 
     if (error) return <div className={styles.errorText}>{error}</div>;
+    const isCurrentUser = address.toLowerCase() === localStorage.getItem('userAddress').toLowerCase();
+
 
     return (
         <motion.div 
@@ -172,7 +174,9 @@ function UserPosts({ address }) {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
             >
-                Your posts
+                {isCurrentUser&& "Your posts"}
+                {!isCurrentUser&& "Posts"}
+                
             </motion.h2>
 
             <AnimatePresence mode="wait">
@@ -241,6 +245,7 @@ function UserPosts({ address }) {
                                         <motion.div className={styles.timestamp}>
                                             Posted on {new Date(Number(post.timestamp) * 1000).toLocaleString()}
                                         </motion.div>
+                                        {isCurrentUser && (
                                         <div className={styles.buttonContainer}>
                                             <motion.button 
                                                 onClick={() => {
@@ -262,6 +267,8 @@ function UserPosts({ address }) {
                                                 Delete
                                             </motion.button>
                                         </div>
+                                    )}
+
                                     </motion.div>
                                 )}
                             </motion.div>
