@@ -111,7 +111,7 @@
   
 }
  
- /* Add responsive design for smaller screens */
+
  @media (max-width: 768px) {
     .tipInputContainer {
         flex-direction: column;

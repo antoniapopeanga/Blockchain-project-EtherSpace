@@ -7,14 +7,14 @@ contract PostContract {
         string content;
         uint256 timestamp;
         bool exists;
-        uint256 tipCount;     // New field to track number of tips
-        uint256 totalTips;    // New field to track total amount of tips in wei
+        uint256 tipCount;     
+        uint256 totalTips;    
 
     }
 
     mapping(address => bool) public hasPosted; // Track if an address has posted
     mapping(address => Post[]) public userPosts;
-    address[] public allUsers; // Optional array to keep track of all users if needed
+    address[] public allUsers; //keep track of all users
 
     event PostCreated(address indexed author, string content, uint256 timestamp);
     event PostUpdated(address indexed author, uint256 indexed postIndex, string newContent);
@@ -30,7 +30,7 @@ contract PostContract {
             content: _content,
             timestamp: block.timestamp,
             exists: true,
-            tipCount: 0,        // Initialize tip count
+            tipCount: 0,        
             totalTips: 0 
         });
 
@@ -39,7 +39,7 @@ contract PostContract {
         // Mark the user as having posted
         if (!hasPosted[msg.sender]) {
             hasPosted[msg.sender] = true;
-            allUsers.push(msg.sender); // Optional: You can store the user in an array if needed
+            allUsers.push(msg.sender); 
         }
 
         emit PostCreated(msg.sender, _content, block.timestamp);
@@ -55,6 +55,8 @@ contract PostContract {
         emit PostUpdated(msg.sender, _postIndex, _newContent);
     }
 
+
+    //soft delete post
     function deletePost(uint256 _postIndex) public {
         require(_postIndex < userPosts[msg.sender].length, "Post index out of bounds");
         require(userPosts[msg.sender][_postIndex].exists, "Post does not exist");
@@ -69,7 +71,6 @@ contract PostContract {
         Post[] memory allPosts = userPosts[_user];
         uint256 existingPostCount = 0;
 
-        // First count existing posts
         for (uint256 i = 0; i < allPosts.length; i++) {
             if (allPosts[i].exists) {
                 existingPostCount++;
@@ -89,14 +90,12 @@ contract PostContract {
         return existingPosts;
     }
 
-    // Get all authors (optional)
+    // Get all authors
     function getAllUsers() public view returns (address[] memory) {
         return allUsers;
     }
 
-
-    
-     // New function to record a tip for a post
+     //function to record a tip for a post
     function recordTip(address _author, uint256 _postIndex, uint256 _amount) public {
         require(_postIndex < userPosts[_author].length, "Post index out of bounds");
         require(userPosts[_author][_postIndex].exists, "Post does not exist");
@@ -108,7 +107,7 @@ contract PostContract {
         emit PostTipped(msg.sender, _author, _postIndex, _amount);
     }
 
-    // New function to get tip statistics for a post
+    //function to get tip statistics for a post
     function getPostTipStats(address _author, uint256 _postIndex) 
         public 
         view 
@@ -121,7 +120,7 @@ contract PostContract {
         return (post.tipCount, post.totalTips);
     }
 
-    // Pure function to calculate average tip amount
+    //pure function to calculate average tip amount
     function calculateAverageTip(uint256 _totalTips, uint256 _tipCount) public pure returns (uint256) {
         require(_tipCount > 0, "No tips to calculate average");
         return _totalTips / _tipCount;

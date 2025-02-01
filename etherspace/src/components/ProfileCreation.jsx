@@ -10,7 +10,13 @@ import {
     PINATA_JWT 
 } from '../config/contracts';
 
+/**
+ * ProfileCreation Component
+ * Handles the creation of user profiles with avatar upload functionality
+ * Integrates with Ethereum blockchain and IPFS for decentralized storage
+ */
 function ProfileCreation() {
+    //navigation and state management
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [bio, setBio] = useState('');
@@ -18,7 +24,10 @@ function ProfileCreation() {
     const [avatarPreview, setAvatarPreview] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    // Handle file selection
+    /**
+     * Handles file selection for avatar upload
+     * Creates a preview URL for the selected image
+     */
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -26,13 +35,18 @@ function ProfileCreation() {
             setAvatarPreview(URL.createObjectURL(file));
         }
     };
+
+    /**
+     * Uploads file to IPFS using Pinata service
+     * Falls back to default avatar(default_avatar.png) if no file is provided
+     */
     const uploadToIPFS = async (file) => {
         try {
             const url = 'https://api.pinata.cloud/pinning/pinFileToIPFS';
             const formData = new FormData();
     
+            //handle default avatar
             if (!file) {
-                // If no file is provided, fetch the default avatar
                 const response = await fetch('/default_avatar.jpg');
                 const blob = await response.blob();
                 formData.append('file', blob, 'default_avatar.jpg');
@@ -40,11 +54,10 @@ function ProfileCreation() {
                 formData.append('file', file);
             }
     
+            //prepare metadata for Pinata
             const pinataMetadata = JSON.stringify({
                 name: file ? file.name : 'default_avatar.jpg',
-                keyvalues: {
-                    type: 'avatar'
-                }
+                keyvalues: { type: 'avatar' }
             });
             formData.append('pinataMetadata', pinataMetadata);
     
@@ -53,6 +66,7 @@ function ProfileCreation() {
             });
             formData.append('pinataOptions', pinataOptions);
     
+            //make request to Pinata
             const response = await axios.post(url, formData, {
                 maxBodyLength: Infinity,
                 headers: {
@@ -63,9 +77,10 @@ function ProfileCreation() {
     
             console.log('Pinata Upload Response:', response.data);
     
+            //extract IPFS hash from response
             const ipfsHash = response.data.IpfsHash || 
-                             response.data.hash || 
-                             response.data.result?.IpfsHash;
+                           response.data.hash || 
+                           response.data.result?.IpfsHash;
     
             if (!ipfsHash) {
                 throw new Error('Failed to extract IPFS hash from Pinata response');
@@ -93,24 +108,31 @@ function ProfileCreation() {
         }
     };
 
+    /**
+     * Handles form submission
+     * Creates blockchain profile and stores avatar on IPFS
+     */
     async function handleSubmit(e) {
         e.preventDefault();
         setIsLoading(true);
     
         try {
-            // Upload avatar to IPFS first
+            //upload avatar to IPFS
             const avatarUrl = await uploadToIPFS(avatar);
     
+            //set up blockchain connection
             const provider = new ethers.BrowserProvider(window.ethereum);
             const signer = await provider.getSigner();
-            const account = await signer.getAddress();  // Get wallet address
+            const account = await signer.getAddress();
     
+            //initialize smart contract
             const contract = new ethers.Contract(
                 PROFILE_CONTRACT_ADDRESS,
                 PROFILE_CONTRACT_ABI,
                 signer
             );
     
+            //create profile on blockchain
             const tx = await contract.createProfile(
                 username,
                 bio,
@@ -120,9 +142,8 @@ function ProfileCreation() {
     
             await tx.wait();
     
-            // Store the wallet address in local state or session storage
+            //store user address and redirect
             localStorage.setItem('userAddress', account);
-    
             alert('Profile created successfully!');
             navigate(`/profile/${account}`);
     
@@ -133,7 +154,6 @@ function ProfileCreation() {
             setIsLoading(false);
         }
     }
-    
 
     return (
         <div className={styles['profile-creation-container']}>
@@ -152,6 +172,7 @@ function ProfileCreation() {
                         disabled={isLoading}
                     />
                 </div>
+
                 <div className={styles['form-group']}>
                     <textarea
                         placeholder="Bio"
@@ -162,6 +183,7 @@ function ProfileCreation() {
                         disabled={isLoading}
                     />
                 </div>
+
                 <div className={styles['form-group']}>
                     <div className={styles['file-input-container']}>
                         <input
@@ -192,6 +214,7 @@ function ProfileCreation() {
                         />
                     )}
                 </div>
+
                 <button 
                     type="submit" 
                     className={styles['submit-button']}

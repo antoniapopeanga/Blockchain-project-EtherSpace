@@ -9,20 +9,35 @@ import {
     PINATA_JWT
 } from '../config/contracts';
 
+/*
+ * ProfileEdit Component
+ * Allows users to edit their existing profile information including bio and avatar
+ * Integrates with blockchain for updates and IPFS for avatar storage
+ */
 function ProfileEdit({ profile, onUpdate, onCancel }) {
+    //initialize state with existing profile data
     const [bio, setBio] = useState(profile.bio);
     const [avatar, setAvatar] = useState(profile.avatar);
     const [selectedFile, setSelectedFile] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
+    /**
+     * Handles file selection for avatar update
+     * Stores the selected file for later upload
+     */
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
             setSelectedFile(file);
+            setAvatar(URL.createObjectURL(file));
         }
     };
 
+    /**
+     * Uploads the selected avatar file to IPFS via Pinata
+     * Returns the IPFS gateway URL for the uploaded file
+     */
     const uploadToIPFS = async (file) => {
         if (!file) return null;
 
@@ -31,11 +46,10 @@ function ProfileEdit({ profile, onUpdate, onCancel }) {
             const formData = new FormData();
             formData.append('file', file);
 
+            //prepare metadata for Pinata
             const pinataMetadata = JSON.stringify({
                 name: file.name,
-                keyvalues: {
-                    type: 'avatar'
-                }
+                keyvalues: { type: 'avatar' }
             });
             formData.append('pinataMetadata', pinataMetadata);
 
@@ -44,6 +58,7 @@ function ProfileEdit({ profile, onUpdate, onCancel }) {
             });
             formData.append('pinataOptions', pinataOptions);
 
+            //upload to Pinata
             const response = await axios.post(url, formData, {
                 maxBodyLength: Infinity,
                 headers: {
@@ -52,6 +67,7 @@ function ProfileEdit({ profile, onUpdate, onCancel }) {
                 }
             });
 
+            //return the IPFS gateway URL
             return `https://gateway.pinata.cloud/ipfs/${response.data.IpfsHash}`;
         } catch (error) {
             console.error('Error uploading to IPFS:', error);
@@ -59,48 +75,53 @@ function ProfileEdit({ profile, onUpdate, onCancel }) {
         }
     };
 
+    /**
+     * Handles form submission
+     * Updates profile information on the blockchain and IPFS if needed
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
 
         try {
-            // Upload new avatar if selected
+            //handle avatar upload if a new file was selected
             let newAvatarUrl = avatar;
             if (selectedFile) {
                 newAvatarUrl = await uploadToIPFS(selectedFile);
                 if (!newAvatarUrl) {
                     throw new Error('Failed to upload avatar');
                 }
+             setAvatar(newAvatarUrl);
+
             }
 
-            // Connect to the blockchain
+            //set up blockchain connection
             const provider = new ethers.BrowserProvider(window.ethereum);
             const signer = await provider.getSigner();
             
-            // Create contract instance with signer
+            //initialize contract with signer for transactions
             const contract = new ethers.Contract(
                 PROFILE_CONTRACT_ADDRESS,
                 PROFILE_CONTRACT_ABI,
                 signer
             );
 
-            // Call the updateProfile function with proper parameters
             console.log('Updating profile with:', {
                 bio: bio,
                 avatar: newAvatarUrl
             });
 
+            //send transaction to update profile
             const tx = await contract.updateProfile(
                 bio,
                 newAvatarUrl || '',
                 { gasLimit: 500000 }
             );
 
-            // Wait for transaction to be mined
+
             await tx.wait();
 
-            // Update local state and notify parent component
             onUpdate({
                 ...profile,
                 bio,
@@ -140,13 +161,13 @@ function ProfileEdit({ profile, onUpdate, onCancel }) {
                         onChange={handleFileChange}
                         className={styles.fileInput}
                     />
-                    {avatar && !selectedFile && (
-                        <img 
-                            src={avatar} 
-                            alt="Current avatar" 
-                            className={styles.avatarPreview}
-                        />
-                    )}
+                    
+                    <img 
+                        src={avatar} 
+                        alt="Avatar preview" 
+                        className={styles.avatarPreview}
+                    />
+                    
                 </div>
 
                 <div className={styles.buttonGroup}>

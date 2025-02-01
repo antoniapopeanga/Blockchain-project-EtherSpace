@@ -106,13 +106,13 @@
     opacity: 0.7;
 }
 
-/* Add these styles for input placeholders */
+
 .form-input::placeholder,
 .form-textarea::placeholder {
     color: rgba(255, 255, 255, 0.6);
 }
 
-/* Optional: Add a label style if you have labels */
+
 .form-label {
     display: block;
     margin-bottom: 0.5rem;
@@ -120,7 +120,7 @@
     font-weight: 500;
 }
 
-/* Add animation for form appearance */
+
 @keyframes formFadeIn {
     from {
         opacity: 0;
@@ -136,8 +136,6 @@
     animation: formFadeIn 0.4s ease-out forwards;
 }
 
-
-/* Add these new styles to your ProfileCreation.module.css */
 
 .file-input-container {
     position: relative;

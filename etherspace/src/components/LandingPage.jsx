@@ -1,10 +1,9 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ethers } from 'ethers';
 import Modal from './Modal';
 import styles from './css/LandingPage.module.css';
-import logo from './css/logo.png'; 
-
+import logo from './css/logo.png';
 
 import { 
     PROFILE_CONTRACT_ADDRESS,
@@ -12,26 +11,31 @@ import {
 } from '../config/contracts';
 
 function LandingPage() {
+    //state management
     const [account, setAccount] = useState('');
     const [isConnecting, setIsConnecting] = useState(false);
     const [showExistingProfileModal, setShowExistingProfileModal] = useState(false);
     const [showNoProfileModal, setShowNoProfileModal] = useState(false);
     const navigate = useNavigate();
 
+    //wallet integration with MetaMask
     async function connectAndCheck() {
         try {
             setIsConnecting(true);
             
+            //check if MetaMask is installed
             if (!window.ethereum) {
                 throw new Error('Please install MetaMask to use this application');
             }
 
+            //request wallet connection
             const accounts = await window.ethereum.request({
                 method: 'eth_requestAccounts'
             });
             const userAddress = accounts[0];
             setAccount(userAddress);
 
+            //initialize connection
             const provider = new ethers.BrowserProvider(window.ethereum);
             const contract = new ethers.Contract(
                 PROFILE_CONTRACT_ADDRESS,
@@ -39,6 +43,7 @@ function LandingPage() {
                 provider
             );
 
+            //check if user has an existing profile
             const profileData = await contract.getProfile(userAddress);
             
             if (profileData[3]) {
@@ -54,12 +59,15 @@ function LandingPage() {
         }
     }
 
+    //modal handlers
+    //if the wallet has a profile associated, it redirects to the user's profile page
     const handleExistingProfileConfirm = () => {
         localStorage.setItem('userAddress', account);
         navigate(`/profile/${account}`, { replace: true });
         setShowExistingProfileModal(false);
     };
 
+    //otherwise redirects to register page
     const handleNoProfileConfirm = () => {
         localStorage.setItem('userAddress', account);
         navigate('/register', { replace: true });
@@ -71,24 +79,18 @@ function LandingPage() {
         setShowNoProfileModal(false);
     };
 
-    //stars animation
+    //stars animation effect
     useEffect(() => {
         const starField = document.createElement('div');
         starField.className = styles.starField;
-        
-        // Create 20 stars
+       
         for (let i = 0; i < 60; i++) {
             const star = document.createElement('div');
             star.className = styles.star;
             
-            // Random position
             star.style.left = `${Math.random() * 100}%`;
             star.style.top = `${Math.random() * 100}%`;
-            
-            // Random animation duration
             star.style.setProperty('--duration', `${2 + Math.random() * 3}s`);
-            
-            // Random animation delay
             star.style.animationDelay = `${Math.random() * 3}s`;
             
             starField.appendChild(star);
@@ -102,9 +104,10 @@ function LandingPage() {
         return () => starField.remove();
     }, []);
 
+
     return (
         <div className={`${styles.container} ${styles.fadeIn}`}>
-           <div className={styles['logo-container']}>
+            <div className={styles['logo-container']}>
                 <img 
                     src={logo} 
                     alt="EtherSpace Logo" 

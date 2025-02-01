@@ -15,7 +15,7 @@ body {
     padding: 1rem;
   }
 
-  .logo-container {
+.logo-container {
     position: relative;
     display: inline-block;
     margin-bottom: 1.5rem;
@@ -55,7 +55,7 @@ body {
     }
 }
 
-/* Update your existing logo styles */
+
 .logo {
     width: 180px;
     height: auto;
@@ -119,35 +119,33 @@ body {
 }
 
 
-  
-  /* Optional: Add some animations */
-  .fadeIn {
-    animation: fadeIn 0.5s ease-in;
-  }
-  
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+.fadeIn {
+  animation: fadeIn 0.5s ease-in;
+}
 
-  @media screen and (max-width: 400px){
-
-    .logo {
-      width: 100px;
-      height: auto;
-      position: relative;
-      z-index: 2;
-      transition: all 0.3s ease;
-      filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.4))
-             drop-shadow(0 0 30px rgba(100, 149, 237, 0.4))
-             drop-shadow(0 0 45px rgba(0, 191, 255, 0.2));
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media screen and (max-width: 400px){
+
+  .logo {
+    width: 100px;
+    height: auto;
+    position: relative;
+    z-index: 2;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.4))
+            drop-shadow(0 0 30px rgba(100, 149, 237, 0.4))
+            drop-shadow(0 0 45px rgba(0, 191, 255, 0.2));
+}
 
 
   .title {

@@ -205,10 +205,10 @@
 }
 
 .avatarPreview {
-  width: 80px;  /* Reduced from 100px */
-  height: 80px; /* Reduced from 100px */
+  width: 80px;  
+  height: 80px;
   object-fit: cover;
-  border-radius: 50%; /* Changed to circle to match profile style */
+  border-radius: 50%;
   margin: 0.5rem 0;
   border: 2px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 0 15px rgba(13, 13, 224, 0.3);

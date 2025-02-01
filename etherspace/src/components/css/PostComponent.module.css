@@ -73,11 +73,11 @@
   background: linear-gradient(145deg, #0D0DE0, #07077A);
   border-radius: 0.75rem;
   padding: 1rem;
-  margin: 0 0 1rem 0; /* Explicitly set all margins */
+  margin: 0 0 1rem 0; 
   width: 100%;
   color: white;
   transition: all 0.3s ease;
-  box-sizing: border-box; /* Add this to ensure padding is included in width */
+  box-sizing: border-box; 
 }
 
 .postCard:hover {

@@ -35,7 +35,7 @@
   color:white;
 }
 
-/* Add some responsive design */
+
 @media (max-width: 768px) {
   .App {
     padding: 10px;

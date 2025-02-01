@@ -6,20 +6,26 @@ import Picker from '@emoji-mart/react';
 import { Smile } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-
-
 import { 
     POST_CONTRACT_ADDRESS, 
-    POST_CONTRACT_ABI
-
+    POST_CONTRACT_ABI 
 } from '../config/contracts';
 
+/**
+ * PostCreation Component
+ * Provides an interface for users to create new posts with emoji support
+ * Posts are stored on the blockchain through a smart contract
+ */
 function PostCreation() {
+    //state for managing post content and UI elements
     const [postContent, setPostContent] = useState('');
     const [error, setError] = useState('');
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [cursorPosition, setCursorPosition] = useState(0);
 
+    /**
+     * Handles emoji insertion
+     */
     const handleEmojiSelect = (emoji) => {
         const text = postContent;
         const start = text.substring(0, cursorPosition);
@@ -29,12 +35,19 @@ function PostCreation() {
         setShowEmojiPicker(false);
     };
 
+    /**
+     * Creates a new post on the blockchain
+     */
     const handleCreatePost = async () => {
         try {
             await window.ethereum.request({ method: 'eth_requestAccounts' });
             const provider = new ethers.BrowserProvider(window.ethereum);
             const signer = await provider.getSigner();
-            const contract = new ethers.Contract(POST_CONTRACT_ADDRESS, POST_CONTRACT_ABI, signer);
+            const contract = new ethers.Contract(
+                POST_CONTRACT_ADDRESS, 
+                POST_CONTRACT_ABI, 
+                signer
+            );
 
             const tx = await contract.createPost(postContent);
             await tx.wait();
@@ -94,17 +107,27 @@ function PostCreation() {
     );
 }
 
+/**
+ * UserPosts Component
+ * Displays and manages a user's posts with editing and deletion capabilities
+ * Includes smooth animations for all interactions
+ */
 function UserPosts({ address }) {
     const [posts, setPosts] = useState([]);
     const [editingIndex, setEditingIndex] = useState(null);
     const [editContent, setEditContent] = useState('');
     const [error, setError] = useState('');
 
+    //fetch user's posts when component mounts or address changes
     useEffect(() => {
         async function fetchPosts() {
             try {
                 const provider = new ethers.BrowserProvider(window.ethereum);
-                const contract = new ethers.Contract(POST_CONTRACT_ADDRESS, POST_CONTRACT_ABI, provider);
+                const contract = new ethers.Contract(
+                    POST_CONTRACT_ADDRESS, 
+                    POST_CONTRACT_ABI, 
+                    provider
+                );
 
                 const userPosts = await contract.getUserPosts(address);
                 setPosts(userPosts);
@@ -119,16 +142,23 @@ function UserPosts({ address }) {
         }
     }, [address]);
 
+    /**
+     * Updates an existing post
+     */
     const handleUpdatePost = async (index) => {
         try {
             const provider = new ethers.BrowserProvider(window.ethereum);
             const signer = await provider.getSigner();
-            const contract = new ethers.Contract(POST_CONTRACT_ADDRESS, POST_CONTRACT_ABI, signer);
+            const contract = new ethers.Contract(
+                POST_CONTRACT_ADDRESS, 
+                POST_CONTRACT_ABI, 
+                signer
+            );
 
             const tx = await contract.updatePost(index, editContent);
             await tx.wait();
 
-            // Refresh posts
+            //refresh posts after update
             const updatedPosts = await contract.getUserPosts(address);
             setPosts(updatedPosts);
             
@@ -140,16 +170,23 @@ function UserPosts({ address }) {
         }
     };
 
+    /**
+     * marks a post as inactive-- soft delete
+     */
     const handleDeletePost = async (index) => {
         try {
             const provider = new ethers.BrowserProvider(window.ethereum);
             const signer = await provider.getSigner();
-            const contract = new ethers.Contract(POST_CONTRACT_ADDRESS, POST_CONTRACT_ABI, signer);
+            const contract = new ethers.Contract(
+                POST_CONTRACT_ADDRESS, 
+                POST_CONTRACT_ABI, 
+                signer
+            );
 
             const tx = await contract.deletePost(index);
             await tx.wait();
 
-            // Refresh posts
+            //refresh posts after deletion
             const updatedPosts = await contract.getUserPosts(address);
             setPosts(updatedPosts);
         } catch (err) {
@@ -160,7 +197,6 @@ function UserPosts({ address }) {
 
     if (error) return <div className={styles.errorText}>{error}</div>;
     const isCurrentUser = address.toLowerCase() === localStorage.getItem('userAddress').toLowerCase();
-
 
     return (
         <motion.div 
@@ -174,9 +210,7 @@ function UserPosts({ address }) {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
             >
-                {isCurrentUser&& "Your posts"}
-                {!isCurrentUser&& "Posts"}
-                
+                {isCurrentUser ? "Your posts" : "Posts"}
             </motion.h2>
 
             <AnimatePresence mode="wait">
@@ -246,29 +280,28 @@ function UserPosts({ address }) {
                                             Posted on {new Date(Number(post.timestamp) * 1000).toLocaleString()}
                                         </motion.div>
                                         {isCurrentUser && (
-                                        <div className={styles.buttonContainer}>
-                                            <motion.button 
-                                                onClick={() => {
-                                                    setEditingIndex(index);
-                                                    setEditContent(post.content);
-                                                }}
-                                                className={styles.editButton}
-                                                whileHover={{ scale: 1.05 }}
-                                                whileTap={{ scale: 0.95 }}
-                                            >
-                                                Edit
-                                            </motion.button>
-                                            <motion.button 
-                                                onClick={() => handleDeletePost(index)}
-                                                className={styles.deleteButton}
-                                                whileHover={{ scale: 1.05 }}
-                                                whileTap={{ scale: 0.95 }}
-                                            >
-                                                Delete
-                                            </motion.button>
-                                        </div>
-                                    )}
-
+                                            <div className={styles.buttonContainer}>
+                                                <motion.button 
+                                                    onClick={() => {
+                                                        setEditingIndex(index);
+                                                        setEditContent(post.content);
+                                                    }}
+                                                    className={styles.editButton}
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                >
+                                                    Edit
+                                                </motion.button>
+                                                <motion.button 
+                                                    onClick={() => handleDeletePost(index)}
+                                                    className={styles.deleteButton}
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                >
+                                                    Delete
+                                                </motion.button>
+                                            </div>
+                                        )}
                                     </motion.div>
                                 )}
                             </motion.div>

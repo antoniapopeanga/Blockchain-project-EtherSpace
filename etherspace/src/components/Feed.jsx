@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useCallback } from 'react';
 import { ethers } from 'ethers';
 import styles from './css/Feed.module.css';
 import { useNavigate } from 'react-router-dom';
@@ -24,11 +24,13 @@ const Feed = () => {
     useEffect(() => {
         const init = async () => {
             try {
+                //connects to wallet
                 if (window.ethereum) {
                     const provider = new ethers.BrowserProvider(window.ethereum);
                     const accounts = await provider.send("eth_requestAccounts", []);
                     setCurrentUser(accounts[0]);
                     
+                    //initializes smart contracts
                     const postContract = new ethers.Contract(
                         POST_CONTRACT_ADDRESS,
                         POST_CONTRACT_ABI,
@@ -54,8 +56,11 @@ const Feed = () => {
         init();
     }, []);
 
-    const fetchUserProfile = async (address) => {
+    //fetches the profile of a user based on its address
+    const fetchUserProfile = useCallback(async (address) => {
         try {
+            if (!profileContract) return null;
+
             const profile = await profileContract.getProfile(address);
             return {
                 username: profile[0],
@@ -67,7 +72,7 @@ const Feed = () => {
             console.error('Error fetching profile for:', address, err);
             return null;
         }
-    };
+    }, [profileContract]);
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -78,12 +83,13 @@ const Feed = () => {
                 const users = await contract.getAllUsers();
                 console.log('Raw users:', users);
                 
+                //fetches the users that are not the current one
                 const otherUsers = Array.from(users).filter(user => 
                     user.toLowerCase() !== currentUser.toLowerCase()
                 );
                 console.log('Filtered users:', otherUsers);
 
-                // Fetch profiles for all users
+                //fetches profiles for all selected users
                 const profiles = {};
                 for (const user of otherUsers) {
                     const profile = await fetchUserProfile(user);
@@ -92,7 +98,8 @@ const Feed = () => {
                     }
                 }
                 setUserProfiles(profiles);
-
+                   
+                //fetches all the posts from each user profile selected
                 const allPosts = await Promise.all(
                     otherUsers.map(async (user) => {
                         try {
@@ -130,8 +137,10 @@ const Feed = () => {
         };
 
         fetchPosts();
-    }, [contract, currentUser, profileContract]);
+    }, [contract, currentUser, profileContract,fetchUserProfile]);
 
+
+    //stars animation
     useEffect(() => {
         const createStarsForElement = (element, numStars) => {
             const starField = document.createElement('div');
@@ -153,22 +162,21 @@ const Feed = () => {
             return starField;
         };
 
-        // Create stars for the container
+        //creates animation for the whole container
         const feedContainer = document.querySelector(`.${styles['feed-container']}`);
         let containerStars = null;
         if (feedContainer) {
-            containerStars = createStarsForElement(feedContainer, 60); // More stars for container
+            containerStars = createStarsForElement(feedContainer, 60); 
         }
 
-        // Create stars for each post card
+        //create stars for each post card
         const postCards = document.querySelectorAll(`.${styles['post-card']}`);
         const postStarFields = [];
         postCards.forEach(card => {
-            const starField = createStarsForElement(card, 30); // Fewer stars for cards
+            const starField = createStarsForElement(card, 30); 
             postStarFields.push(starField);
         });
 
-        // Cleanup function
         return () => {
             if (containerStars) containerStars.remove();
             postStarFields.forEach(field => field.remove());

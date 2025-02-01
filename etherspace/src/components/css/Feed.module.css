@@ -18,12 +18,12 @@
 
 .feed-container {
     width: 100%;
-    max-width: 450px; /* Reduced from 600px */
+    max-width: 450px;
     margin: 0 auto;
     padding: 2rem;
     min-height: calc(100vh - 100px);
-    position: relative; /* Add this */
-    overflow: hidden; /* Add this */
+    position: relative; 
+    overflow: hidden;
 }
 
 .starField {
@@ -58,7 +58,7 @@
     }
 }
 
-/* Make sure content stays above stars */
+
 .post-content,
 .author-info,
 .post-footer {
@@ -215,10 +215,7 @@
 }
 
 
-
-
-
-/* Small Mobile Devices */
+/* mobile devices*/
 @media (max-width: 480px) {
     .feed-container {
         padding: 0.5rem;
@@ -278,7 +275,7 @@
     }
 }
 
-/* Extra Small Mobile Devices */
+
 @media (max-width: 375px) {
     .feed-container {
         padding: 0.25rem;
@@ -308,11 +305,11 @@
     }
 
     .starField {
-        display: none; /* Optional: remove star animation on very small screens */
+        display: none; 
     }
 }
 
-/* Ensure responsive behavior */
+
 * {
     -webkit-tap-highlight-color: transparent;
     box-sizing: border-box;
@@ -328,7 +325,7 @@ img {
     height: auto;
 }
 
-/* Additional mobile-friendly adjustments */
+
 @media (hover: hover) {
     .post-card:hover,
     .author-info:hover {
@@ -338,6 +335,6 @@ img {
 
 @media (max-width: 768px) {
     .starField {
-        opacity: 0.5; /* Reduce star intensity on mobile */
+        opacity: 0.5; 
     }
 }

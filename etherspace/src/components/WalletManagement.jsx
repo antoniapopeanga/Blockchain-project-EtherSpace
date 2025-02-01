@@ -7,14 +7,23 @@ import {
     ETH_TRANSFER_CONTRACT_ABI
 } from '../config/contracts';
 
+/**
+ * WalletManagement Component
+ * Provides interface for users to deposit and withdraw ETH from a smart contract
+ * Handles real-time balance updates and transaction management
+ */
 function WalletManagement() {
+    //state management for wallet operations
     const [contractBalance, setContractBalance] = useState('0');
     const [depositAmount, setDepositAmount] = useState('');
     const [withdrawAmount, setWithdrawAmount] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
-    // Fetch contract balance
+    /**
+     * Fetches and updates the current balance in the smart contract
+     * Converts the balance from wei to ETH for display
+     */
     const fetchContractBalance = async (contract) => {
         try {
             const balance = await contract.getBalance();
@@ -25,141 +34,114 @@ function WalletManagement() {
         }
     };
 
-    // Deposit funds
+    /**
+     * Handles the deposit of ETH into the smart contract
+     * Validates input, processes the transaction, and updates the display
+     */
     const handleDeposit = async () => {
         try {
-            // Validate input
+            //input validation
             const amount = parseFloat(depositAmount);
             if (isNaN(amount) || amount <= 0) {
                 setError('Please enter a valid deposit amount');
                 return;
             }
 
-            // Request account access
+            //connect to wallet and create contract instance
             await window.ethereum.request({ method: 'eth_requestAccounts' });
-            
-            // Create provider and signer
             const provider = new ethers.BrowserProvider(window.ethereum);
             const signer = await provider.getSigner();
-            
-            // Create contract instance
             const ethTransferContract = new ethers.Contract(
                 ETH_TRANSFER_CONTRACT_ADDRESS, 
                 ETH_TRANSFER_CONTRACT_ABI, 
                 signer
             );
     
-            // Convert deposit amount to wei
+            //process deposit transaction
             const depositInWei = ethers.parseEther(depositAmount);
-    
-            // Deposit ETH into the contract
             const tx = await ethTransferContract.deposit({
                 value: depositInWei
             });
-            
-            // Wait for transaction confirmation
             await tx.wait();
     
-            // Fetch updated balance
+            //update UI after successful deposit
             await fetchContractBalance(ethTransferContract);
-    
-            // Show success message
             setSuccess(`Deposited ${depositAmount} ETH successfully!`);
             setError('');
             setDepositAmount('');
         } catch (err) {
             console.error('Deposit error:', err);
-            
-            // Error handling
-            if (err.code === 'ACTION_REJECTED') {
-                setError('Deposit was rejected by the user');
-            } else if (err.info && err.info.error) {
-                setError(`Failed to deposit: ${err.info.error.message}`);
-            } else if (err.reason) {
-                setError(`Failed to deposit: ${err.reason}`);
-            } else {
-                setError(`Failed to deposit: ${err.message}`);
-            }
-            setSuccess('');
+            handleTransactionError(err, 'deposit');
         }
     };
 
-    // Withdraw funds
+    /**
+     * Handles the withdrawal of ETH from the smart contract
+     * Validates input, processes the transaction, and updates the display
+     */
     const handleWithdraw = async () => {
         try {
-            // Validate input
+            //input validation
             const amount = parseFloat(withdrawAmount);
             if (isNaN(amount) || amount <= 0) {
                 setError('Please enter a valid withdrawal amount');
                 return;
             }
 
-            // Request account access
+            //connect to wallet and create contract instance
             await window.ethereum.request({ method: 'eth_requestAccounts' });
-            
-            // Create provider and signer
             const provider = new ethers.BrowserProvider(window.ethereum);
             const signer = await provider.getSigner();
-            
-            // Create contract instance
             const ethTransferContract = new ethers.Contract(
                 ETH_TRANSFER_CONTRACT_ADDRESS, 
                 ETH_TRANSFER_CONTRACT_ABI, 
                 signer
             );
     
-            // Convert withdrawal amount to wei
+            //process withdrawal transaction
             const withdrawInWei = ethers.parseEther(withdrawAmount);
-    
-            // Withdraw ETH from the contract
             const tx = await ethTransferContract.withdraw(withdrawInWei);
-            
-            // Wait for transaction confirmation
             await tx.wait();
     
-            // Fetch updated balance
+            //update UI after successful withdrawal
             await fetchContractBalance(ethTransferContract);
-    
-            // Show success message
             setSuccess(`Withdrawn ${withdrawAmount} ETH successfully!`);
             setError('');
             setWithdrawAmount('');
         } catch (err) {
             console.error('Withdrawal error:', err);
-            
-            // Error handling
-            if (err.code === 'ACTION_REJECTED') {
-                setError('Withdrawal was rejected by the user');
-            } else if (err.info && err.info.error) {
-                setError(`Failed to withdraw: ${err.info.error.message}`);
-            } else if (err.reason) {
-                setError(`Failed to withdraw: ${err.reason}`);
-            } else {
-                setError(`Failed to withdraw: ${err.message}`);
-            }
-            setSuccess('');
+            handleTransactionError(err, 'withdraw');
         }
     };
 
-    // Fetch balance on component mount
+    /**
+     * Helper function to handle different types of transaction errors
+     */
+    const handleTransactionError = (err, operation) => {
+        if (err.code === 'ACTION_REJECTED') {
+            setError(`${operation} was rejected by the user`);
+        } else if (err.info && err.info.error) {
+            setError(`Failed to ${operation}: ${err.info.error.message}`);
+        } else if (err.reason) {
+            setError(`Failed to ${operation}: ${err.reason}`);
+        } else {
+            setError(`Failed to ${operation}: ${err.message}`);
+        }
+        setSuccess('');
+    };
+
+    //initialize contract and fetch initial balance
     useEffect(() => {
         const initializeBalance = async () => {
             try {
-                // Request account access
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
-                
-                // Create provider and signer
                 const provider = new ethers.BrowserProvider(window.ethereum);
                 const signer = await provider.getSigner();
-                
-                // Create contract instance
                 const ethTransferContract = new ethers.Contract(
                     ETH_TRANSFER_CONTRACT_ADDRESS, 
                     ETH_TRANSFER_CONTRACT_ABI, 
                     signer
                 );
-
-                // Fetch initial balance
                 await fetchContractBalance(ethTransferContract);
             } catch (err) {
                 console.error('Error initializing:', err);
@@ -196,7 +178,6 @@ function WalletManagement() {
                         Deposit
                     </button>
                 </div>
-
                 <div className={styles.withdrawSection}>
                     <h3>Withdraw Funds</h3>
                     <input 

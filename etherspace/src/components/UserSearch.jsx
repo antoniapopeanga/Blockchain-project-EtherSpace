@@ -3,31 +3,45 @@ import { useNavigate } from 'react-router-dom';
 import { ethers } from 'ethers';
 import styles from './css/UserSearch.module.css';
 
-
 import { 
-
     PROFILE_CONTRACT_ADDRESS,
     PROFILE_CONTRACT_ABI 
 } from '../config/contracts';
 
+/**
+ * UserSearch Component
+ * Provides functionality to search and display users who have profiles on the platform
+ */
 function UserSearch() {
+    //state management for search functionality
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [profiledUsers, setProfiledUsers] = useState([]);
     const navigate = useNavigate();
 
+    //effect to fetch all users with profiles when component mounts
     useEffect(() => {
         const fetchProfiledUsers = async () => {
             try {
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                //request connection to user's Ethereum wallet
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
                 
+                //set up blockchain connection
                 const provider = new ethers.BrowserProvider(window.ethereum);
-                const contract = new ethers.Contract(PROFILE_CONTRACT_ADDRESS, PROFILE_CONTRACT_ABI, provider);
+                const contract = new ethers.Contract(
+                    PROFILE_CONTRACT_ADDRESS, 
+                    PROFILE_CONTRACT_ABI, 
+                    provider
+                );
 
+                //create promises to fetch each user's profile
                 const profilePromises = accounts.map(async (address) => {
                     try {
                         const profileData = await contract.getProfile(address);
                         
+                        //only return profiles that exist
                         if (profileData[3]) {
                             return {
                                 address,
@@ -43,7 +57,9 @@ function UserSearch() {
                     }
                 });
 
+                //wait for all profile fetches to complete
                 const profiles = await Promise.all(profilePromises);
+                //filter out any null profiles (failed fetches or non-existent profiles)
                 const validProfiles = profiles.filter(profile => profile !== null);
                 setProfiledUsers(validProfiles);
             } catch (error) {
@@ -54,6 +70,10 @@ function UserSearch() {
         fetchProfiledUsers();
     }, []);
 
+    /**
+     * Handles search input changes and filters users based on search term
+     * Searches through both usernames and bios
+     */
     const handleSearch = (e) => {
         const term = e.target.value.toLowerCase();
         setSearchTerm(term);
@@ -66,6 +86,9 @@ function UserSearch() {
         setSearchResults(results);
     };
 
+    /**
+     * Navigates to a user's profile page when their card is clicked
+     */
     const navigateToProfile = (address) => {
         navigate(`/profile/${address}`);
     };

@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar'; // Import the Navbar component
+import Navbar from './components/Navbar';
 import LandingPage from './components/LandingPage';
 import ProfileCreation from './components/ProfileCreation';
 import UserProfile from './components/UserProfile';
@@ -11,8 +11,6 @@ import './App.css';
 
 
 function App() {
-  const userAddress = localStorage.getItem('userAddress');
-
   return (
     <div className="App">
       <Navbar />

@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ethers } from 'ethers';
 import { PostCreation, UserPosts } from './PostComponent';
 import ProfileEdit from './ProfileEdit';
-
 import styles from './css/UserProfile.module.css';
 
 import { 
@@ -11,11 +10,19 @@ import {
     PROFILE_CONTRACT_ABI 
 } from '../config/contracts';
 
+/**
+ * Main UserProfile component that serves as a router wrapper
+ * Determines which profile to display
+ */
 function UserProfile() {
     const { address } = useParams();
     return <UserProfileContent address={address} />;
 }
 
+/**
+ * Core profile content component that handles the display and management
+ * of a user's profile information and posts
+ */
 function UserProfileContent({ address }) {
     const navigate = useNavigate();
     const [profile, setProfile] = useState(null);
@@ -23,7 +30,7 @@ function UserProfileContent({ address }) {
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
 
-
+    //effect to fetch profile data and handle authentication
     useEffect(() => {
         const checkAuthAndFetchProfile = async () => {
             const storedAddress = localStorage.getItem('userAddress');
@@ -64,7 +71,7 @@ function UserProfileContent({ address }) {
         }
     }, [address, navigate]);
 
-    // Add another effect to handle logout
+    //effect to handle authentication status
     useEffect(() => {
         const checkAuth = () => {
             const storedAddress = localStorage.getItem('userAddress');
@@ -73,36 +80,25 @@ function UserProfileContent({ address }) {
             }
         };
 
-        // Check immediately
         checkAuth();
-
-        // Set up an interval to check periodically
         const interval = setInterval(checkAuth, 1000);
-
-        // Cleanup interval on component unmount
         return () => clearInterval(interval);
     }, [navigate]);
 
-
+    //stars animation for profile card
     useEffect(() => {
-        if (!profile) return; // Only create stars when profile is loaded
+        if (!profile) return;
     
         const starField = document.createElement('div');
         starField.className = styles.starField;
         
-        // Create 20 stars
         for (let i = 0; i < 40; i++) {
             const star = document.createElement('div');
             star.className = styles.star;
             
-            // Random position
             star.style.left = `${Math.random() * 100}%`;
             star.style.top = `${Math.random() * 100}%`;
-            
-            // Random animation duration
             star.style.setProperty('--duration', `${2 + Math.random() * 3}s`);
-            
-            // Random animation delay
             star.style.animationDelay = `${Math.random() * 3}s`;
             
             starField.appendChild(star);
@@ -118,32 +114,22 @@ function UserProfileContent({ address }) {
                 starField.remove();
             }
         };
-    }, [profile]); // Add profile as dependency
+    }, [profile]);
 
-    if (loading) return <div className={styles.loadingText}>Loading...</div>;
-    if (error) return <div className={styles.errorText}>{error}</div>;
-    if (!profile || !profile.exists) return <div className={styles.notFoundText}>Profile not found</div>;
-    const handleEdit = () => {
-        setIsEditing(true);
-    };
-
+    const handleEdit = () => setIsEditing(true);
     const handleUpdateSuccess = (updatedProfile) => {
         setProfile(updatedProfile);
         setIsEditing(false);
     };
+    const handleCancel = () => setIsEditing(false);
 
-    const handleCancel = () => {
-        setIsEditing(false);
-    };
 
-    
     if (loading) return <div className={styles.loadingText}>Loading...</div>;
     if (error) return <div className={styles.errorText}>{error}</div>;
     if (!profile || !profile.exists) return <div className={styles.notFoundText}>Profile not found</div>;
     
+    //check if viewing user is the profile owner
     const isCurrentUser = address.toLowerCase() === localStorage.getItem('userAddress').toLowerCase();
-
-
 
     return (
         <div className={styles.container}>
@@ -157,14 +143,14 @@ function UserProfileContent({ address }) {
                 <div className={styles.profileCard}>
                     {profile.avatar ? (
                         <img 
-                        src={profile.avatar || '/default_avatar.jpg'} 
-                        alt={profile.username}
-                        className={styles.avatar}
-                        onError={(e) => {
-                            console.log('Avatar load error, falling back to default');
-                            e.target.src = '/default_avatar.jpg';
-                        }} 
-                    />
+                            src={profile.avatar || '/default_avatar.jpg'} 
+                            alt={profile.username}
+                            className={styles.avatar}
+                            onError={(e) => {
+                                console.log('Avatar load error, falling back to default');
+                                e.target.src = '/default_avatar.jpg';
+                            }} 
+                        />
                     ) : (
                         <div className={styles.avatarPlaceholder} />
                     )}
@@ -185,8 +171,7 @@ function UserProfileContent({ address }) {
             )}
             
             <div className={styles.postsSection}>
-                {isCurrentUser &&<PostCreation />}
-                
+                {isCurrentUser && <PostCreation />}
                 <UserPosts address={address} />
             </div>
         </div>

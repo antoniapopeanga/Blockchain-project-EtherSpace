@@ -3,35 +3,35 @@ pragma solidity ^0.8.0;
 
 
 contract EtherSpaceProfile {
-    // Define the basic structure for a user profile
+    //define the basic structure for a user profile
     struct Profile {
-        string username;     // User's unique handle
-        string bio;         // Brief user description
-        string avatar;      // Avatar image URI
-        bool exists;        // Check if profile exists
+        string username;    
+        string bio;        
+        string avatar;     
+        bool exists;      
     }
     
-    // State variables
+
     address public owner;
     mapping(address => Profile) public profiles;
     mapping(string => bool) public usernameExists;
     
-    // Events to track profile changes
+    //events to track profile changes
     event ProfileCreated(address indexed userAddress, string username);
     event ProfileUpdated(address indexed userAddress);
     
-    // Set contract owner on deployment
+ 
     constructor() {
         owner = msg.sender;
     }
     
-    // Modifier to check if sender has a profile
+    //modifier to check if sender has a profile
     modifier hasProfile() {
         require(profiles[msg.sender].exists, "Profile does not exist");
         _;
     }
     
-    // Modifier to check if username is valid
+    //modifier to check if username is valid
     modifier validUsername(string memory _username) {
         require(bytes(_username).length >= 3, "Username too short");
         require(bytes(_username).length <= 16, "Username too long");
@@ -70,6 +70,8 @@ contract EtherSpaceProfile {
         emit ProfileUpdated(msg.sender);
     }
 
+
+    //returns the profile data based on user address
     function getProfile(address _address) public view returns (
         string memory username,
         string memory bio,
