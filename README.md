@@ -39,7 +39,6 @@ EtherSpace is a decentralized social networking platform built on the Ethereum b
 ### Development Tools
 - Hardhat
 - MetaMask
-- Pinata
 
 ## 🖼️ Decentralized Profile Picture Storage
 
