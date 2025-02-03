@@ -192,8 +192,9 @@ const TipPost = ({ post, authorAddress }) => {
                 </div>
                 <div className={styles.statBox}>
                     <span className={styles.statLabel}>Average Tip</span>
-                    <span className={styles.statValue}>{averageTip} ETH</span>
+                    <span className={styles.statValue}>{Number(averageTip).toFixed(3)} ETH</span>
                 </div>
+
             </div>
         </div>
     );

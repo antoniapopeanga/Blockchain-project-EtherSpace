@@ -20,6 +20,23 @@ function WalletManagement() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
+
+    /**
+     * Helper function to handle different types of transaction errors
+     */
+    const handleTransactionError = (err, operation) => {
+        if (err.code === 'ACTION_REJECTED') {
+            setError(`${operation} was rejected by the user`);
+        } else if (err.info && err.info.error) {
+            setError(`Failed to ${operation}: ${err.info.error.message}`);
+        } else if (err.reason) {
+            setError(`Failed to ${operation}: ${err.reason}`);
+        } else {
+            setError(`Failed to ${operation}: ${err.message}`);
+        }
+        setSuccess('');
+    };
+
     /**
      * Fetches and updates the current balance in the smart contract
      * Converts the balance from wei to ETH for display
@@ -114,21 +131,7 @@ function WalletManagement() {
         }
     };
 
-    /**
-     * Helper function to handle different types of transaction errors
-     */
-    const handleTransactionError = (err, operation) => {
-        if (err.code === 'ACTION_REJECTED') {
-            setError(`${operation} was rejected by the user`);
-        } else if (err.info && err.info.error) {
-            setError(`Failed to ${operation}: ${err.info.error.message}`);
-        } else if (err.reason) {
-            setError(`Failed to ${operation}: ${err.reason}`);
-        } else {
-            setError(`Failed to ${operation}: ${err.message}`);
-        }
-        setSuccess('');
-    };
+
 
     //initialize contract and fetch initial balance
     useEffect(() => {
